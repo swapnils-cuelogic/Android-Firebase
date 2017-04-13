@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="0ecb4b595fa0f0f8018a149ace3ea6525624f94e">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-compat-24.2.1_cd65c6c9e8c10035a0e4d8549bfc345b7bf714ec/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-v4-24.2.1_7ce2454e3b67957512f2a719a5d155a2a9aefa51/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="af7582c6b327449c6d32518e6a10307860b7b5d6">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-base-9.6.1_d4f400244876bf3e4da65e78a7a205eea0a285db/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-tasks/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="4a36600281a648769411ef642c331851732bf29e">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-tasks-9.6.1_d56d8f40083f18db3dda1ddc7442093dafd5f44c/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-iid/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="1e14ebe1cda8491f152083e752ca5bf73cd37bff">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-iid-9.6.1_256467e4abb59b69d2427b347f1e63bcce868ccb/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="94bc1dfb84dcc8b6f6f8f7cc726d7b2dd39c1574">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-animated-vector-drawable-24.2.1_c6e6bcb65802166f21220e348a20f3e6c2a2a42a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="09b462bbcb77650284bd6614f1a32f360ef369f8">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-media-compat-24.2.1_6204d5385dba43d68d15d6be5478fd5263c6c431/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-common/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="1ef72e72bc0d05602c366582afa9439f58bb31d6">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-common-9.6.1_d27f327ccd184be6ee80f235ccbbab8875caf36f/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="a1c351dc10b92d638da57f3a6513f87cfbdc9f83">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-analytics-9.6.1_63baf4cc2bde29dce4cb51ec1c1f7225db4586cd/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="e7f3132168957eefc46229fc32c3bd464642b71e">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-core-ui-24.2.1_ce92a19cf17624ffb7059e0851bca3d2b57c56b0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-media-compat/24.2.1/jars/libs/internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="fbf8da429efd5ad21e02e3e5ecaa1efc4167878d">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-24.2.1_74299c4b17361ac4ffb1bed9c031493ea6482ac6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-database/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="b75ecdd04a37d31b4a0da2729fc5c558962a529b">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-database-9.6.1_2847729c62f92b969290d01fae727c4e440517d1/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="9c4c3bc902450c39ed54de170db4fb12aea20a35">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-core-utils-24.2.1_f242ca94aaf37271cc346ed76d66872685c1df22/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-fragment/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="b9a1ac78ad7ef3abedc4a4b30cd92bcacb939d1f">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-fragment-24.2.1_2052db2dbf267e808d5b1c70b13def9c08d6adff/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-messaging/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="80dd8bea08bc5fe10b10a3243b8279c856ccc690">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-messaging-9.6.1_f823aa2e49f2a7b29362f14e34c12016b00e5c21/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="eccaaa9ffa6bb4bfbd2e870f01aaf69655d353be">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.android.gms-play-services-basement-9.6.1_05de3e3005e31e6d80f964549ed12c588c2c6edf/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.4.1/c7c4f9e35c2fd5900da24f9872e3971801f08ce0/okhttp-3.4.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="c7c4f9e35c2fd5900da24f9872e3971801f08ce0">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/okhttp-3.4.1_884a7330c18a60444a611b01c64b19a691519efc/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.9.0/f824591a0016efbaeddb8300bee54832a1398cfa/okio-1.9.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="f824591a0016efbaeddb8300bee54832a1398cfa">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/okio-1.9.0_135519d3c4c3dd3ad3928ca842513a0239be9f41/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/design/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="e03f47f3d1017a093bb3239d4ec47c3447f40744">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-design-24.2.1_b2962902e5855ec3477ee1c3a2a675f165408414/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="2a18547ea91d258866d132c2a763185f15b01b25">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-9.6.1_f431f0c9af503f13976aa5ed145230cb961fd022/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth-common/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="77558e74bb2056ef38516296f13a27c4c4fc3e5c">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-common-9.6.1_3b5d31dbdf2ad598fdd56760b68c5ad4427bcc3a/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-auth-module/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="6ffe8b28ab61e5ee92ab9431a220379790c71ddf">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-auth-module-9.6.1_3b3aefeddf56bd41ff929a37e6a33d0389aabe39/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/.gradle/caches/modules-2/files-2.1/org.greenrobot/eventbus/3.0.0/ddd99896e9569eaababbe81b35d80e1b91c4ad85/eventbus-3.0.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="ddd99896e9569eaababbe81b35d80e1b91c4ad85">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/eventbus-3.0.0_8e1cc0f84fd27c55ce280dbea80f42036ca02e51/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-core-ui/24.2.1/jars/libs/internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="867dad63c33388ff8c7644b236579355036d075f">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-24.2.1_dd4328f38b70fd7d8ced4246ef461d4697921cd9/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-fragment/24.2.1/jars/libs/internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="5f64d657e838e8375135c0f6057a7ff8fab6a50e">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-24.2.1_423e1752f6646a298e9183e711514fe2fe9f2b18/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="43b2dba6b5a0b14527961b75329d0b90025f15ea">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-appcompat-v7-24.2.1_001918230d68dab50aa9153ea44418c4da9e2517/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics-impl/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="0efd1b44f47c134fb245914a1d54a55adbfc2f8d">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-analytics-impl-9.6.1_7cc5ab7daf8f3903a9603017ff6bd7d71fe0158d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="f3d38695f1bf4f8265397476ba79a4590728a224">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_1d0e7fe91d9c2871f01be9303b1e6c69c0150b82/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.google.firebase/firebase-database-connection/9.6.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="ac8365c87591065db07f7bac8551504504832cd4">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.google.firebase-firebase-database-connection-9.6.1_358b45257e106287a1d5f30c69d08354d18b5cb7/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="d5c731fc64c03dfe04d51134955b483551c35849">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-support-vector-drawable-24.2.1_c7b794d8819e63803a6cc059b056a5bfb98c2711/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-compat/24.2.1/jars/libs/internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="7e4389bd133359a2ff88623ff1e4ff93d6e6f780">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-24.2.1_232e68c5b22e4b50a9e7ef017f8202540fc1bcc2/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/support-core-utils/24.2.1/jars/libs/internal_impl-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="935a969265b2a166b2d20415423f5f6e90fe16e0">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/internal_impl-24.2.1_622a2ae62c83f0dfca5b52274acc048464b28746/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Android_SDK_COPY/android_sdk_mac/extras/android/m2repository/com/android/support/support-annotations/24.2.1/support-annotations-24.2.1.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="8de3aafecbdf98a61db6427f008f2d515bcd2544">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/support-annotations-24.2.1_d20d91dc4daa920d6dda8abc2b180ecbffb260a6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="91045f5659f0573ba8acc1cfaf9133056a9aec56">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_268145121e88d89c84aca3d3442478cdb6a25c77/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/24.2.1/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="7521486d9bfd2cd9e756e0cf75ed7d97f2ce2d3b">
+        <dex dex="/Users/swapnils/Documents/My_Stuff/Android/Firebase_CrazyHitty_Chat/firebase-chat/app/build/intermediates/transforms/dex/debug/folders/1000/10/com.android.support-recyclerview-v7-24.2.1_400e7950e7e209860f255dce1471661242ae4d92/classes.dex" />
+    </item>
+
+</items>
