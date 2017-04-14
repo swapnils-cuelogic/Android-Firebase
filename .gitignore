@@ -1,0 +1,39 @@
+# Ignore gradle files
+.gradle/
+build/
+
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+/.idea
+
+/captures
+
+#built application files
+/app/*.apk
+/app/*.ap_
+
+# files for the dex VM
+*.dex
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Log Files
+*.log
+
+# Android Studio Navigation editor temp files
+.navigation/
+
+# OS-specific files
+*.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
