@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.crazyhitty.chdev.ks.firebasechat">
+    package="com.cuelogic.firebase.chat">
 
     <application
-        android:name=".FirebaseChatMainApp"
+        android:name="com.cuelogic.firebase.chat.FirebaseChatMainApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.activities.SplashActivity"
+            android:name="com.cuelogic.firebase.chat.ui.activities.SplashActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar.Splash">
             <intent-filter>
@@ -20,28 +20,28 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activities.LoginActivity"
+            android:name="com.cuelogic.firebase.chat.ui.activities.LoginActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.activities.RegisterActivity"
+            android:name="com.cuelogic.firebase.chat.ui.activities.RegisterActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.activities.UserListingActivity"
+            android:name="com.cuelogic.firebase.chat.ui.activities.UserListingActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.activities.ChatActivity"
+            android:name="com.cuelogic.firebase.chat.ui.activities.ChatActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name=".fcm.MyFirebaseMessagingService">
+        <service android:name="com.cuelogic.firebase.chat.fcm.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".fcm.MyFirebaseInstanceIDService">
+        <service android:name="com.cuelogic.firebase.chat.fcm.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
