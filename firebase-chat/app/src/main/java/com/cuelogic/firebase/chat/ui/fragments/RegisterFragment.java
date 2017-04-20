@@ -19,6 +19,7 @@ import com.cuelogic.firebase.chat.core.registration.RegisterPresenter;
 import com.cuelogic.firebase.chat.core.users.add.AddUserContract;
 import com.cuelogic.firebase.chat.core.users.add.AddUserPresenter;
 import com.cuelogic.firebase.chat.ui.activities.UserListingActivity;
+import com.cuelogic.firebase.chat.utils.StringUtils;
 import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterFragment extends Fragment implements View.OnClickListener, RegisterContract.View, AddUserContract.View {
@@ -27,7 +28,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     private RegisterPresenter mRegisterPresenter;
     private AddUserPresenter mAddUserPresenter;
 
-    private EditText mETxtEmail, mETxtPassword;
+    private EditText mETxtName, mETxtEmail, mETxtPassword;
     private Button mBtnRegister;
 
     private ProgressDialog mProgressDialog;
@@ -48,6 +49,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void bindViews(View view) {
+        mETxtName = (EditText) view.findViewById(R.id.edit_text_name);
         mETxtEmail = (EditText) view.findViewById(R.id.edit_text_email_id);
         mETxtPassword = (EditText) view.findViewById(R.id.edit_text_password);
         mBtnRegister = (Button) view.findViewById(R.id.button_register);
@@ -83,17 +85,46 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void onRegister(View view) {
-        String emailId = mETxtEmail.getText().toString();
-        String password = mETxtPassword.getText().toString();
+        if(isValidInfo()) {
+            String name = mETxtName.getText().toString().trim();
+            String emailId = mETxtEmail.getText().toString().trim();
+            String password = mETxtPassword.getText().toString().trim();
 
-        mRegisterPresenter.register(getActivity(), emailId, password);
-        mProgressDialog.show();
+            mRegisterPresenter.register(getActivity(), name, emailId, password);
+            mProgressDialog.show();
+        } else {
+            Toast.makeText(getActivity(), "Invalid data to register!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isValidInfo() {
+        if("".equals(mETxtName.getText().toString().trim())) {
+            mETxtName.setError("Invalid Name");
+        } else {
+            mETxtName.setError(null);
+        }
+        if("".equals(mETxtEmail.getText().toString().trim())) {
+            mETxtEmail.setError("Invalid Email");
+        } else {
+            if(StringUtils.isValidEmail(mETxtEmail.getText().toString().trim())) {
+                mETxtEmail.setError(null);
+            } else {
+                mETxtEmail.setError("Invalid Email");
+            }
+        }
+        if("".equals(mETxtPassword.getText().toString().trim())) {
+            mETxtPassword.setError("Invalid Password");
+        } else {
+            mETxtPassword.setError(null);
+        }
+        return mETxtName.getError() == null && mETxtEmail.getError() == null && mETxtPassword.getError() == null;
     }
 
     @Override
     public void onRegistrationSuccess(FirebaseUser firebaseUser) {
         mProgressDialog.setMessage(getString(R.string.adding_user_to_db));
         Toast.makeText(getActivity(), "Registration Successful!", Toast.LENGTH_SHORT).show();
+        String displayName = mETxtName.getText().toString().trim();
         mAddUserPresenter.addUser(getActivity().getApplicationContext(), firebaseUser);
     }
 

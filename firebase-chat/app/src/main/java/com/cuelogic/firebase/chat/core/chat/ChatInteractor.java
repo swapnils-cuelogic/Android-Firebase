@@ -58,7 +58,7 @@ public class ChatInteractor implements ChatContract.Interactor {
                 }
 
                 // send push notification to the receiver
-                sendPushNotificationToReceiver(chat.sender, chat.message, chat.senderUid,
+                sendPushNotificationToReceiver(chat.displayName, chat.sender, chat.message, chat.senderUid,
                         new SharedPrefUtil(context).getString(Constants.ARG_FIREBASE_TOKEN), receiverFirebaseToken);
                 mOnSendMessageListener.onSendMessageSuccess();
             }
@@ -70,11 +70,11 @@ public class ChatInteractor implements ChatContract.Interactor {
         });
     }
 
-    private void sendPushNotificationToReceiver(String username, String message, String uid,
+    private void sendPushNotificationToReceiver(String displayName, String username, String message, String uid,
                                                 String firebaseToken, String receiverFirebaseToken) {
         Logger.vLog(TAG, "sendPushNotificationToReceiver()", true);
         FcmNotificationBuilder.initialize()
-                .title(username).message(message).username(username)
+                .title(displayName).message(message).username(username)
                 .uid(uid).firebaseToken(firebaseToken).receiverFirebaseToken(receiverFirebaseToken)
                 .send();
     }

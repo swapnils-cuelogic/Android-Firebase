@@ -6,23 +6,24 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
+import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.fragments.ChatFragment;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.Logger;
 
 public class ChatActivity extends AppCompatActivity {
     private Toolbar mToolbar;
+    private User user;
 
     private static final String TAG = ChatActivity.class.getSimpleName();
 
-    public static void startActivity(Context context, String receiver, String receiverUid, String firebaseToken) {
+    public static void startActivity(Context context, User user) {
         Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(Constants.ARG_RECEIVER, receiver);
-        intent.putExtra(Constants.ARG_RECEIVER_UID, receiverUid);
-        intent.putExtra(Constants.ARG_FIREBASE_TOKEN, firebaseToken);
+        intent.putExtra(Constants.ARG_USER, user);
         context.startActivity(intent);
     }
 
@@ -42,31 +43,29 @@ public class ChatActivity extends AppCompatActivity {
     private void init() {
         // set the toolbar
         setSupportActionBar(mToolbar);
-
-        // set toolbar title
-        mToolbar.setTitle(getIntent().getExtras().getString(Constants.ARG_RECEIVER));
-
-        // set the register screen fragment
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout_content_chat,
-                ChatFragment.newInstance(getIntent().getExtras().getString(Constants.ARG_RECEIVER),
-                        getIntent().getExtras().getString(Constants.ARG_RECEIVER_UID),
-                        getIntent().getExtras().getString(Constants.ARG_FIREBASE_TOKEN)),
-                ChatFragment.class.getSimpleName());
-        fragmentTransaction.commit();
+        user = getIntent().getParcelableExtra(Constants.ARG_USER);
+        if(user != null) {
+            // set toolbar title
+            mToolbar.setTitle(user.displayName != null ? user.displayName : user.email);
+            // set the register screen fragment
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.frame_layout_content_chat, ChatFragment.newInstance(user), ChatFragment.class.getSimpleName());
+            fragmentTransaction.commit();
+        } else {
+            onBackPressed();
+            Toast.makeText(this, "Invalid users data found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        FirebaseChatMainApp.setChatActivityOpen(true);
-        Logger.vLog(TAG, "onResume()", true);
+        FirebaseChatMainApp.setChatActivityOpen(true, user.uid);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        FirebaseChatMainApp.setChatActivityOpen(false);
-        Logger.vLog(TAG, "onPause()", true);
+        FirebaseChatMainApp.setChatActivityOpen(false, "");
     }
 }
