@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/blue_grey_500</color>
-    <color name="colorPrimaryDark">@color/blue_grey_700</color>
-    <color name="colorAccent">@color/cyan_700</color>
+    <color name="colorPrimary">#7d62d9</color>
+    <color name="colorPrimaryDark">#512DA8</color>
+    <color name="colorAccent">#26c6da</color>
+
+    <color name="chatBubbleMe">#7d62d9</color>
+    <color name="chatTextMe">#ffffff</color>
+    <color name="chatBubbleOther">#26c6da</color>
+    <color name="chatTextOther">#ffffff</color>
 
     <color name="red_50">#FFEBEE</color>
     <color name="red_100">#FFCDD2</color>

@@ -59,14 +59,14 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        FirebaseChatMainApp.setChatActivityOpen(true);
+        FirebaseChatMainApp.setChatActivityOpen(true, getIntent().getExtras().getString(Constants.ARG_RECEIVER_UID));
         Logger.vLog(TAG, "onResume()", true);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        FirebaseChatMainApp.setChatActivityOpen(false);
+        FirebaseChatMainApp.setChatActivityOpen(false, null);
         Logger.vLog(TAG, "onPause()", true);
     }
 }
