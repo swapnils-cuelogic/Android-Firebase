@@ -4,6 +4,7 @@ package com.cuelogic.firebase.chat.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.cuelogic.firebase.chat.database.model.DaoMaster;
 import com.cuelogic.firebase.chat.utils.Logger;
 
 /**
@@ -30,6 +31,5 @@ public class MigrateSQLiteOpenHelper extends DaoMaster.DevOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 }

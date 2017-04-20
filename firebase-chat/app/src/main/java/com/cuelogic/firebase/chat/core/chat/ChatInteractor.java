@@ -3,6 +3,7 @@ package com.cuelogic.firebase.chat.core.chat;
 import android.content.Context;
 import android.util.Log;
 
+import com.cuelogic.firebase.chat.database.ChatTableHelper;
 import com.cuelogic.firebase.chat.fcm.FcmNotificationBuilder;
 import com.cuelogic.firebase.chat.models.Chat;
 import com.cuelogic.firebase.chat.utils.Constants;
@@ -100,6 +101,7 @@ public class ChatInteractor implements ChatContract.Interactor {
                             Logger.vLog(TAG, "getMessageFromFirebaseUser: onChildAdded: " + string, true);
                             Chat chat = dataSnapshot.getValue(Chat.class);
                             mOnGetMessagesListener.onGetMessagesSuccess(chat);
+                            ChatTableHelper.addMessage(chat); //insert chat record to database
                         }
 
                         @Override
@@ -134,6 +136,7 @@ public class ChatInteractor implements ChatContract.Interactor {
                             Logger.vLog(TAG, "getMessageFromFirebaseUser: onChildAdded", true);
                             Chat chat = dataSnapshot.getValue(Chat.class);
                             mOnGetMessagesListener.onGetMessagesSuccess(chat);
+                            ChatTableHelper.addMessage(chat); //insert chat record to database
                         }
 
                         @Override

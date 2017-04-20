@@ -2,6 +2,9 @@ package com.cuelogic.firebase.chat.database;
 
 import android.content.Context;
 
+import com.cuelogic.firebase.chat.database.model.ChatInfoDao;
+import com.cuelogic.firebase.chat.database.model.DaoMaster;
+import com.cuelogic.firebase.chat.database.model.DaoSession;
 import com.cuelogic.firebase.chat.utils.Logger;
 
 import org.greenrobot.greendao.database.Database;
@@ -23,7 +26,6 @@ public class DatabaseHelper {
 
     private static DatabaseHelper databaseHelper;
     private DaoSession daoSession;
-    private SampleDao mSampleDao;
 
     private DatabaseHelper() {
     }
@@ -46,7 +48,10 @@ public class DatabaseHelper {
     }
 
     public SampleDao getSampleDao() {
-        mSampleDao = daoSession.getSampleDao();
-        return mSampleDao;
+        return daoSession.getSampleDao();
+    }
+
+    public ChatInfoDao getChatInfoDao() {
+        return daoSession.getChatInfoDao();
     }
 }

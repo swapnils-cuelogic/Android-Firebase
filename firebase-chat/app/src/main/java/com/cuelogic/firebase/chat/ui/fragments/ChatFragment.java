@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.ChatContract;
 import com.cuelogic.firebase.chat.core.chat.ChatPresenter;
+import com.cuelogic.firebase.chat.database.ChatTableHelper;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.Chat;
 import com.cuelogic.firebase.chat.models.User;
@@ -29,6 +30,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.android.gms.internal.zzs.TAG;
 
@@ -56,6 +58,12 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
+        String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String receiverUid = getArguments().getString(Constants.ARG_RECEIVER_UID);
+        if (null != senderUid && null != receiverUid) {
+            List<Chat> mRecords = ChatTableHelper.getRecords(senderUid, receiverUid);
+            Logger.vLog(TAG, "Database Chat Records: " + mRecords.size());
+        }
     }
 
     @Override

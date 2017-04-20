@@ -14,6 +14,7 @@ public class Chat implements Parcelable {
     public String message;
     public long timestamp;
     public String displayName;
+    public long id;
 
     public Chat() {
     }
