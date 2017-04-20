@@ -12,11 +12,11 @@ public interface RegisterContract {
     }
 
     interface Presenter {
-        void register(Activity activity, String email, String password);
+        void register(Activity activity, String displayName, String email, String password);
     }
 
     interface Interactor {
-        void performFirebaseRegistration(Activity activity, String email, String password);
+        void performFirebaseRegistration(Activity activity, String displayName, String email, String password);
     }
 
     interface OnRegistrationListener {

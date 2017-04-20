@@ -86,10 +86,11 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
 
     private void onRegister(View view) {
         if(isValidInfo()) {
+            String name = mETxtName.getText().toString().trim();
             String emailId = mETxtEmail.getText().toString().trim();
             String password = mETxtPassword.getText().toString().trim();
 
-            mRegisterPresenter.register(getActivity(), emailId, password);
+            mRegisterPresenter.register(getActivity(), name, emailId, password);
             mProgressDialog.show();
         } else {
             Toast.makeText(getActivity(), "Invalid data to register!", Toast.LENGTH_SHORT).show();
@@ -124,7 +125,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         mProgressDialog.setMessage(getString(R.string.adding_user_to_db));
         Toast.makeText(getActivity(), "Registration Successful!", Toast.LENGTH_SHORT).show();
         String displayName = mETxtName.getText().toString().trim();
-        mAddUserPresenter.addUser(getActivity().getApplicationContext(), firebaseUser, displayName);
+        mAddUserPresenter.addUser(getActivity().getApplicationContext(), firebaseUser);
     }
 
     @Override

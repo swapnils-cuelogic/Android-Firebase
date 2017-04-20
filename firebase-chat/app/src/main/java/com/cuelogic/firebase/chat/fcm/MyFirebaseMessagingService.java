@@ -60,7 +60,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      */
     private void sendNotification(String title, String message, String receiver, String receiverUid, String firebaseToken) {
         Intent intent = new Intent(this, ChatActivity.class);
-        intent.putExtra(Constants.ARG_USER, new User(receiver, receiverUid, firebaseToken, title));
+        intent.putExtra(Constants.ARG_USER, new User(receiverUid, receiver, firebaseToken, title));
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);

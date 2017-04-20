@@ -1,8 +1,8 @@
 package com.cuelogic.firebase.chat.database;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 
 /**
  * @version 1.0.0
