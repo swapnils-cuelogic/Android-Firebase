@@ -19,6 +19,7 @@ import com.cuelogic.firebase.chat.core.chat.ChatContract;
 import com.cuelogic.firebase.chat.core.chat.ChatPresenter;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.Chat;
+import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.adapters.ChatRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.Logger;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import static com.google.android.gms.internal.zzs.TAG;
 
 public class ChatFragment extends Fragment implements ChatContract.View, TextView.OnEditorActionListener {
+    private User user;
     private RecyclerView mRecyclerViewChat;
     private EditText mETxtMessage;
 
@@ -41,12 +43,10 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
 
     private ChatPresenter mChatPresenter;
 
-    public static ChatFragment newInstance(String receiver, String receiverUid, String firebaseToken) {
+    public static ChatFragment newInstance(User user) {
         Logger.vLog(TAG, "newInstance()", true);
         Bundle args = new Bundle();
-        args.putString(Constants.ARG_RECEIVER, receiver);
-        args.putString(Constants.ARG_RECEIVER_UID, receiverUid);
-        args.putString(Constants.ARG_FIREBASE_TOKEN, firebaseToken);
+        args.putParcelable(Constants.ARG_USER, user);
         ChatFragment fragment = new ChatFragment();
         fragment.setArguments(args);
         return fragment;
@@ -84,6 +84,8 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     }
 
     private void init() {
+        user = getArguments().getParcelable(Constants.ARG_USER);
+
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle(getString(R.string.loading));
         mProgressDialog.setMessage(getString(R.string.please_wait));
@@ -93,8 +95,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
         mETxtMessage.setOnEditorActionListener(this);
 
         mChatPresenter = new ChatPresenter(this);
-        mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                getArguments().getString(Constants.ARG_RECEIVER_UID));
+        mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
     }
 
     @Override
@@ -108,14 +109,10 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
 
     private void sendMessage() {
         String message = mETxtMessage.getText().toString();
-        String receiver = getArguments().getString(Constants.ARG_RECEIVER);
-        String receiverUid = getArguments().getString(Constants.ARG_RECEIVER_UID);
         String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();
         String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String receiverFirebaseToken = getArguments().getString(Constants.ARG_FIREBASE_TOKEN);
-        Chat chat = new Chat(sender,
-                receiver, senderUid, receiverUid, message, System.currentTimeMillis());
-        mChatPresenter.sendMessage(getActivity().getApplicationContext(), chat, receiverFirebaseToken);
+        Chat chat = new Chat(sender, user.email, senderUid, user.uid, message, System.currentTimeMillis());
+        mChatPresenter.sendMessage(getActivity().getApplicationContext(), chat, user.firebaseToken);
     }
 
     @Override

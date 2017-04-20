@@ -6,6 +6,13 @@
     android:padding="@dimen/padding_avg">
 
     <EditText
+        android:id="@+id/edit_text_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/name"
+        android:inputType="textCapWords" />
+
+    <EditText
         android:id="@+id/edit_text_email_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
