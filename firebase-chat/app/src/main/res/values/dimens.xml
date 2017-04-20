@@ -25,4 +25,7 @@
 
     <dimen name="card_corner_radius">4dp</dimen>
     <dimen name="card_elevation">4dp</dimen>
+    <dimen name="logo_width">120dp</dimen>
+    <dimen name="logo_height">120dp</dimen>
+    <dimen name="splash_title">28dp</dimen>
 </resources>

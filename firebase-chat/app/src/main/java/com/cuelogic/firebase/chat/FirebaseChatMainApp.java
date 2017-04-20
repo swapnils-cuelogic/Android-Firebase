@@ -12,13 +12,16 @@ public class FirebaseChatMainApp extends Application {
     private static DatabaseHelper databaseHelper;
     private static Context mContext;
     private static boolean sIsChatActivityOpen = false;
+    private static String receiverUid = "";
 
-    public static boolean isChatActivityOpen() {
-        return sIsChatActivityOpen;
+    public static boolean isChattingWithSameUser(String uid) {
+        return sIsChatActivityOpen && receiverUid.equals(uid);
     }
 
-    public static void setChatActivityOpen(boolean isChatActivityOpen) {
+    public static void setChatActivityOpen(boolean isChatActivityOpen, String receiverUid) {
         FirebaseChatMainApp.sIsChatActivityOpen = isChatActivityOpen;
+        if(receiverUid != null)
+            FirebaseChatMainApp.receiverUid = receiverUid;
     }
 
     @Override
