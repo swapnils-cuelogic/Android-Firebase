@@ -22,7 +22,7 @@ public class DatabaseHelper {
     /**
      * A flag to show how easily you can switch from standard SQLite to the encrypted SQLCipher.
      */
-    private static final boolean ENCRYPTED = true;
+    private static final boolean ENCRYPTED = false;
 
     private static DatabaseHelper databaseHelper;
     private DaoSession daoSession;

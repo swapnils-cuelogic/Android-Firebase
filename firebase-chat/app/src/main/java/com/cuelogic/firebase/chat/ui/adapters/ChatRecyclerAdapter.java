@@ -25,7 +25,8 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void add(Chat chat) {
         mChats.add(chat);
-        notifyItemInserted(mChats.size() - 1);
+        notifyDataSetChanged();
+        //notifyItemInserted(mChats.size() - 1);
     }
 
     @Override
@@ -75,10 +76,11 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public int getItemCount() {
-        if (mChats != null) {
-            return mChats.size();
-        }
-        return 0;
+//        if (mChats != null) {
+//            return mChats.size();
+//        }
+//        return 0;
+        return mChats.size();
     }
 
     @Override

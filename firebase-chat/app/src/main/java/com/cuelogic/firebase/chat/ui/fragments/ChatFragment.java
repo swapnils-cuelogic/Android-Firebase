@@ -1,6 +1,5 @@
 package com.cuelogic.firebase.chat.ui.fragments;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,7 +28,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.android.gms.internal.zzs.TAG;
@@ -38,9 +36,6 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     private User user;
     private RecyclerView mRecyclerViewChat;
     private EditText mETxtMessage;
-
-    private ProgressDialog mProgressDialog;
-
     private ChatRecyclerAdapter mChatRecyclerAdapter;
 
     private ChatPresenter mChatPresenter;
@@ -58,12 +53,6 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
-        String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        String receiverUid = getArguments().getString(Constants.ARG_RECEIVER_UID);
-        if (null != senderUid && null != receiverUid) {
-            List<Chat> mRecords = ChatTableHelper.getRecords(senderUid, receiverUid);
-            Logger.vLog(TAG, "Database Chat Records: " + mRecords.size());
-        }
     }
 
     @Override
@@ -91,19 +80,26 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
         init();
     }
 
+
     private void init() {
         user = getArguments().getParcelable(Constants.ARG_USER);
-
-        mProgressDialog = new ProgressDialog(getActivity());
-        mProgressDialog.setTitle(getString(R.string.loading));
-        mProgressDialog.setMessage(getString(R.string.please_wait));
-        mProgressDialog.setIndeterminate(true);
-        //mProgressDialog.show();
-
         mETxtMessage.setOnEditorActionListener(this);
 
         mChatPresenter = new ChatPresenter(this);
         mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
+
+        String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String receiverUid = user.uid; //usergetArguments().getString(Constants.ARG_RECEIVER_UID);
+        if (null != receiverUid) {
+            List<Chat> mRecords = ChatTableHelper.getRecords(senderUid, receiverUid);
+            Logger.vLog(TAG, "Database Chat Records: " + mRecords.size());
+            if (mChatRecyclerAdapter == null) {
+                mChatRecyclerAdapter = new ChatRecyclerAdapter(mRecords);
+                mRecyclerViewChat.setAdapter(mChatRecyclerAdapter);
+                if (mChatRecyclerAdapter.getItemCount() > 0)
+                    mRecyclerViewChat.smoothScrollToPosition(mChatRecyclerAdapter.getItemCount() - 1);
+            }
+        }
     }
 
     @Override
@@ -136,15 +132,18 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     }
 
     @Override
-    public void onGetMessagesSuccess(Chat chat) {
-        mProgressDialog.dismiss();
+    public void onGetMessagesSuccess(final Chat chat) {
         Logger.vLog(TAG, "onGetMessagesSuccess()", true);
-        if (mChatRecyclerAdapter == null) {
-            mChatRecyclerAdapter = new ChatRecyclerAdapter(new ArrayList<Chat>());
-            mRecyclerViewChat.setAdapter(mChatRecyclerAdapter);
-        }
+        //        if (mChatRecyclerAdapter == null) {
+        //            mChatRecyclerAdapter = new ChatRecyclerAdapter(new ArrayList<Chat>());
+        //            mRecyclerViewChat.setAdapter(mChatRecyclerAdapter);
+        //        }
+        //mChats.add(chat);
         mChatRecyclerAdapter.add(chat);
-        mRecyclerViewChat.smoothScrollToPosition(mChatRecyclerAdapter.getItemCount() - 1);
+        //mChatRecyclerAdapter.notifyDataSetChanged();
+        //mChatRecyclerAdapter.notifyDataSetChanged();
+//        if (mChatRecyclerAdapter.getItemCount() > 0)
+//            mRecyclerViewChat.smoothScrollToPosition(mChatRecyclerAdapter.getItemCount() - 1);
     }
 
     @Override
@@ -160,5 +159,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
             mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                     pushNotificationEvent.getUid());
         }
+//        mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
+//                pushNotificationEvent.getUid());
     }
 }

@@ -87,6 +87,27 @@ public class ChatTableHelper {
         return messageRecords;
     }
 
+    public static Chat getLastElement(String senderUid, String receiverUid) {
+        List<Chat> messageRecords = new ArrayList<Chat>();
+        try {
+            ChatInfoDao chatInfoDao = ChatTableHelper.getInstance().chatInfoDao;
+
+            QueryBuilder<ChatInfo> queryBuilder = chatInfoDao.queryBuilder();
+            queryBuilder.or(ChatInfoDao.Properties.SenderUid.eq(senderUid), ChatInfoDao.Properties.SenderUid.eq(receiverUid));
+            queryBuilder.or(ChatInfoDao.Properties.ReceiverUid.eq(senderUid), ChatInfoDao.Properties.ReceiverUid.eq(receiverUid));
+            queryBuilder.orderDesc(ChatInfoDao.Properties.Timestamp);
+
+            List records = queryBuilder.list();
+            if (null != records && records.size() > 0) {
+                ChatInfo chatInfo = (ChatInfo) records.get(0);
+                return ChatInfoMapper.getBean(chatInfo);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
 
     public static void insertRecords(List<Chat> chatRecords) {
         try {

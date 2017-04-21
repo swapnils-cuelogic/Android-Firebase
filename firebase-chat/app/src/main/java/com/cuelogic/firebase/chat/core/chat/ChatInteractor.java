@@ -99,9 +99,22 @@ public class ChatInteractor implements ChatContract.Interactor {
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String string) {
                             Logger.vLog(TAG, "getMessageFromFirebaseUser: onChildAdded: " + string, true);
-                            Chat chat = dataSnapshot.getValue(Chat.class);
-                            mOnGetMessagesListener.onGetMessagesSuccess(chat);
-                            ChatTableHelper.addMessage(chat); //insert chat record to database
+                            final Chat chat = dataSnapshot.getValue(Chat.class);
+                            if (null != chat) {
+                                Chat lastChatElement = ChatTableHelper.getLastElement(chat.senderUid, chat.receiverUid);
+                                if (null == lastChatElement) {
+                                    mOnGetMessagesListener.onGetMessagesSuccess(chat);
+                                    long rowId = ChatTableHelper.addMessage(chat); //insert chat record to database
+                                    Logger.vLog(TAG, "RowId: " + rowId);
+                                } else if (lastChatElement.timestamp < chat.timestamp) {
+                                    mOnGetMessagesListener.onGetMessagesSuccess(chat);
+                                    long rowId = ChatTableHelper.addMessage(chat); //insert chat record to database
+                                    Logger.vLog(TAG, "RowId: " + rowId);
+                                } else {
+                                    long rowId = ChatTableHelper.addMessage(chat); //insert chat record to database
+                                    Logger.vLog(TAG, "RowId: " + rowId);
+                                }
+                            }
                         }
 
                         @Override
@@ -132,11 +145,24 @@ public class ChatInteractor implements ChatContract.Interactor {
                             .child(Constants.ARG_CHAT_ROOMS)
                             .child(room_type_2).addChildEventListener(new ChildEventListener() {
                         @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            Logger.vLog(TAG, "getMessageFromFirebaseUser: onChildAdded", true);
-                            Chat chat = dataSnapshot.getValue(Chat.class);
-                            mOnGetMessagesListener.onGetMessagesSuccess(chat);
-                            ChatTableHelper.addMessage(chat); //insert chat record to database
+                        public void onChildAdded(DataSnapshot dataSnapshot, String string) {
+                            Logger.vLog(TAG, "getMessageFromFirebaseUser: onChildAdded: " + string, true);
+                            final Chat chat = dataSnapshot.getValue(Chat.class);
+                            if (null != chat) {
+                                Chat lastChatElement = ChatTableHelper.getLastElement(chat.senderUid, chat.receiverUid);
+                                if (null == lastChatElement) {
+                                    mOnGetMessagesListener.onGetMessagesSuccess(chat);
+                                    long rowId = ChatTableHelper.addMessage(chat); //insert chat record to database
+                                    Logger.vLog(TAG, "RowId: " + rowId);
+                                } else if (lastChatElement.timestamp < chat.timestamp) {
+                                    mOnGetMessagesListener.onGetMessagesSuccess(chat);
+                                    long rowId = ChatTableHelper.addMessage(chat); //insert chat record to database
+                                    Logger.vLog(TAG, "RowId: " + rowId);
+                                } else {
+                                    long rowId = ChatTableHelper.addMessage(chat); //insert chat record to database
+                                    Logger.vLog(TAG, "RowId: " + rowId);
+                                }
+                            }
                         }
 
                         @Override
