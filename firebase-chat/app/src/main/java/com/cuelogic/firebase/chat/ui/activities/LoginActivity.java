@@ -4,14 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.ui.fragments.LoginFragment;
 
-public class LoginActivity extends AppCompatActivity {
-    private Toolbar mToolbar;
+public class LoginActivity extends BaseActivity {
 
     public static void startIntent(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -26,20 +23,12 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        bindViews();
+        super.onCreate(savedInstanceState);
         init();
     }
 
-    private void bindViews() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-    }
-
     private void init() {
-        // set the toolbar
-        setSupportActionBar(mToolbar);
-
         // set the login screen fragment
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout_content_login,

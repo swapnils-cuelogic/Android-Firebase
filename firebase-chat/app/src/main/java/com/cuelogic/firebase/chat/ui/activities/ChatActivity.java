@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
@@ -13,10 +11,8 @@ import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.fragments.ChatFragment;
 import com.cuelogic.firebase.chat.utils.Constants;
-import com.cuelogic.firebase.chat.utils.Logger;
 
-public class ChatActivity extends AppCompatActivity {
-    private Toolbar mToolbar;
+public class ChatActivity extends BaseActivity {
     private User user;
 
     private static final String TAG = ChatActivity.class.getSimpleName();
@@ -29,20 +25,12 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Logger.vLog(TAG, "onCreate()", true);
-        bindViews();
+        super.onCreate(savedInstanceState);
         init();
     }
 
-    private void bindViews() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-    }
-
     private void init() {
-        // set the toolbar
-        setSupportActionBar(mToolbar);
         user = getIntent().getParcelableExtra(Constants.ARG_USER);
         if(user != null) {
             // set toolbar title
