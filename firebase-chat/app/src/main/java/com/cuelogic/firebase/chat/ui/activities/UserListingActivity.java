@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -18,8 +16,7 @@ import com.cuelogic.firebase.chat.core.logout.LogoutContract;
 import com.cuelogic.firebase.chat.core.logout.LogoutPresenter;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingPagerAdapter;
 
-public class UserListingActivity extends AppCompatActivity implements LogoutContract.View {
-    private Toolbar mToolbar;
+public class UserListingActivity extends BaseActivity implements LogoutContract.View {
     private TabLayout mTabLayoutUserListing;
     private ViewPager mViewPagerUserListing;
 
@@ -38,21 +35,14 @@ public class UserListingActivity extends AppCompatActivity implements LogoutCont
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_listing);
-        bindViews();
+        super.onCreate(savedInstanceState);
         init();
     }
 
-    private void bindViews() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    private void init() {
         mTabLayoutUserListing = (TabLayout) findViewById(R.id.tab_layout_user_listing);
         mViewPagerUserListing = (ViewPager) findViewById(R.id.view_pager_user_listing);
-    }
-
-    private void init() {
-        // set the toolbar
-        setSupportActionBar(mToolbar);
 
         // set the view pager adapter
         UserListingPagerAdapter userListingPagerAdapter = new UserListingPagerAdapter(getSupportFragmentManager());
