@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersContract;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersPresenter;
@@ -115,7 +116,7 @@ public class UsersFragment extends Fragment implements GetUsersContract.View, It
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-        Toast.makeText(getActivity(), "Error: " + message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

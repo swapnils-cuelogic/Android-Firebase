@@ -13,14 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.registration.RegisterContract;
 import com.cuelogic.firebase.chat.core.registration.RegisterPresenter;
 import com.cuelogic.firebase.chat.core.users.add.AddUserContract;
 import com.cuelogic.firebase.chat.core.users.add.AddUserPresenter;
+import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.activities.UserListingActivity;
 import com.cuelogic.firebase.chat.utils.StringUtils;
-import com.google.firebase.auth.FirebaseUser;
 
 public class RegisterFragment extends Fragment implements View.OnClickListener, RegisterContract.View, AddUserContract.View {
     private static final String TAG = RegisterFragment.class.getSimpleName();
@@ -93,7 +94,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
             mRegisterPresenter.register(getActivity(), name, emailId, password);
             mProgressDialog.show();
         } else {
-            Toast.makeText(getActivity(), "Invalid data to register!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(FirebaseChatMainApp.getAppContext(), "Invalid data to register!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -121,11 +122,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     }
 
     @Override
-    public void onRegistrationSuccess(FirebaseUser firebaseUser) {
+    public void onRegistrationSuccess(User user) {
         mProgressDialog.setMessage(getString(R.string.adding_user_to_db));
-        Toast.makeText(getActivity(), "Registration Successful!", Toast.LENGTH_SHORT).show();
-        String displayName = mETxtName.getText().toString().trim();
-        mAddUserPresenter.addUser(getActivity().getApplicationContext(), firebaseUser);
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Registration Successful!", Toast.LENGTH_SHORT).show();
+        mAddUserPresenter.addUser(getActivity().getApplicationContext(), user);
     }
 
     @Override
@@ -133,13 +133,13 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         mProgressDialog.dismiss();
         mProgressDialog.setMessage(getString(R.string.please_wait));
         Log.e(TAG, "onRegistrationFailure: " + message);
-        Toast.makeText(getActivity(), "Registration failed!+\n" + message, Toast.LENGTH_LONG).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Registration failed!+\n" + message, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onAddUserSuccess(String message) {
         mProgressDialog.dismiss();
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), message, Toast.LENGTH_SHORT).show();
         UserListingActivity.startActivity(getActivity(),
                 Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     }
@@ -147,6 +147,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onAddUserFailure(String message) {
         mProgressDialog.dismiss();
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 }

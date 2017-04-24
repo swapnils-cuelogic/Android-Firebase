@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.greenrobot.greendao'
-apply plugin: 'com.google.gms.google-services'
 
 buildscript {
     repositories {
@@ -48,6 +47,7 @@ dependencies {
     compile 'com.google.firebase:firebase-database:9.8.0'
     compile 'com.google.firebase:firebase-messaging:9.8.0'
     compile 'com.google.firebase:firebase-auth:9.8.0'
+    compile 'com.google.android.gms:play-services-auth:9.8.0'
     compile 'com.google.firebase:firebase-config:9.8.0'
 
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
@@ -55,3 +55,5 @@ dependencies {
     compile 'org.greenrobot:greendao:3.2.0'
     compile 'net.zetetic:android-database-sqlcipher:3.5.4'
 }
+
+apply plugin: 'com.google.gms.google-services'

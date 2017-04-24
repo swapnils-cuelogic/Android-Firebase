@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.login.LoginContract;
 import com.cuelogic.firebase.chat.core.login.LoginPresenter;
@@ -95,7 +96,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Log
     @Override
     public void onLoginSuccess(String message) {
         mProgressDialog.dismiss();
-        Toast.makeText(getActivity(), "Logged in successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Logged in successfully", Toast.LENGTH_SHORT).show();
         UserListingActivity.startActivity(getActivity(),
                 Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     }
@@ -103,6 +104,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Log
     @Override
     public void onLoginFailure(String message) {
         mProgressDialog.dismiss();
-        Toast.makeText(getActivity(), "Error: " + message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
     }
 }

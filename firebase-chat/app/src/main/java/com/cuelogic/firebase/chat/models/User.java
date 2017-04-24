@@ -11,6 +11,7 @@ public class User implements Parcelable {
     public String email;
     public String firebaseToken;
     public String displayName;
+    public String photoUrl;
 
     public User() {
     }
@@ -20,6 +21,14 @@ public class User implements Parcelable {
         this.email = email;
         this.firebaseToken = firebaseToken;
         this.displayName = displayName;
+    }
+
+    public User(String uid, String email, String firebaseToken, String displayName, String photoUrl) {
+        this.uid = uid;
+        this.email = email;
+        this.firebaseToken = firebaseToken;
+        this.displayName = displayName;
+        this.photoUrl = photoUrl;
     }
 
     @Override
@@ -33,6 +42,7 @@ public class User implements Parcelable {
         dest.writeString(this.email);
         dest.writeString(this.firebaseToken);
         dest.writeString(this.displayName);
+        dest.writeString(this.photoUrl);
     }
 
     protected User(Parcel in) {
@@ -40,6 +50,7 @@ public class User implements Parcelable {
         this.email = in.readString();
         this.firebaseToken = in.readString();
         this.displayName = in.readString();
+        this.photoUrl = in.readString();
     }
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
