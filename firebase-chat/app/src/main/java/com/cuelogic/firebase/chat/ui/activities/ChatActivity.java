@@ -35,6 +35,11 @@ public class ChatActivity extends BaseActivity {
         if(user != null) {
             // set toolbar title
             mToolbar.setTitle(user.displayName != null ? user.displayName : user.email);
+
+            if(user.email != null) {
+                mToolbar.setSubtitle(user.email);
+            }
+            enableBackButton();
             // set the register screen fragment
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.frame_layout_content_chat, ChatFragment.newInstance(user), ChatFragment.class.getSimpleName());
