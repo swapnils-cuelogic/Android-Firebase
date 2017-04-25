@@ -7,13 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.SharedPrefUtil;
+import com.cuelogic.firebase.chat.utils.StringUtils;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -142,10 +142,14 @@ public class GoogleSignInActivity extends BaseActivity {
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-
+                if (StringUtils.isCuelogicEmail(account.getEmail())) {
+                    firebaseAuthWithGoogle(account);
+                } else {
+                    Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                    showAlertMessage("Please login using Cuelogic email id.");
+                }
             } else {
-                // Google Sign In failed, update UI appropriately
+                showToastShort("Google Sign In failed, update UI appropriately");
             }
         }
     }
@@ -164,12 +168,12 @@ public class GoogleSignInActivity extends BaseActivity {
         }
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
 
         mProgressDialog.show();
 
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -200,8 +204,7 @@ public class GoogleSignInActivity extends BaseActivity {
                         } else {
                             mProgressDialog.dismiss();
                             Log.w(TAG, "signInWithCredential", task.getException());
-                            Toast.makeText(FirebaseChatMainApp.getAppContext(), "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            showAlertMessage("Authentication failed.");
                         }
                     }
                 });
@@ -218,11 +221,11 @@ public class GoogleSignInActivity extends BaseActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             mProgressDialog.dismiss();
-                            Toast.makeText(FirebaseChatMainApp.getAppContext(), "Logged in successfully", Toast.LENGTH_SHORT).show();
+                            showToastShort("Logged in successfully");
                             UserListingActivity.startActivity(GoogleSignInActivity.this, Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         } else {
                             mProgressDialog.dismiss();
-                            Toast.makeText(FirebaseChatMainApp.getAppContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            showAlertMessage(task.getException().getMessage());
                         }
                     }
                 });

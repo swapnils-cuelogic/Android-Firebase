@@ -4,22 +4,19 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.login.LoginContract;
 import com.cuelogic.firebase.chat.core.login.LoginPresenter;
 import com.cuelogic.firebase.chat.ui.activities.RegisterActivity;
 import com.cuelogic.firebase.chat.ui.activities.UserListingActivity;
 
-public class LoginFragment extends Fragment implements View.OnClickListener, LoginContract.View {
+public class LoginFragment extends BaseFragment implements View.OnClickListener, LoginContract.View {
     private LoginPresenter mLoginPresenter;
 
     private EditText mETxtEmail, mETxtPassword;
@@ -96,7 +93,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Log
     @Override
     public void onLoginSuccess(String message) {
         mProgressDialog.dismiss();
-        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Logged in successfully", Toast.LENGTH_SHORT).show();
+        showToastShort("Logged in successfully");
         UserListingActivity.startActivity(getActivity(),
                 Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     }
@@ -104,6 +101,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener, Log
     @Override
     public void onLoginFailure(String message) {
         mProgressDialog.dismiss();
-        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Error: " + message, Toast.LENGTH_SHORT).show();
+        showAlertMessage("Error: " + message);
     }
 }

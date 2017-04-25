@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.logout.LogoutContract;
@@ -116,7 +115,7 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
 
     @Override
     public void onLogoutSuccess(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        showToastShort(message);
         FirebaseAuth.getInstance().signOut();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
@@ -130,6 +129,6 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
 
     @Override
     public void onLogoutFailure(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        showAlertMessage(message);
     }
 }

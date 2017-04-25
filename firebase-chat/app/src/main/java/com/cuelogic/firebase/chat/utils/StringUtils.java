@@ -8,4 +8,7 @@ public class StringUtils {
     public static boolean isValidEmail(CharSequence email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
+    public static boolean isCuelogicEmail(String email) {
+        return email.endsWith("cuelogic.co.in") || email.endsWith("cuelogic.com");
+    }
 }

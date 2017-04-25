@@ -3,7 +3,6 @@ package com.cuelogic.firebase.chat.ui.fragments;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -12,9 +11,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.ChatContract;
 import com.cuelogic.firebase.chat.core.chat.ChatPresenter;
@@ -33,7 +30,7 @@ import java.util.ArrayList;
 
 import static com.google.android.gms.internal.zzs.TAG;
 
-public class ChatFragment extends Fragment implements ChatContract.View, TextView.OnEditorActionListener {
+public class ChatFragment extends BaseFragment implements ChatContract.View, TextView.OnEditorActionListener {
     private User user;
     private RecyclerView mRecyclerViewChat;
     private EditText mETxtMessage;
@@ -120,12 +117,12 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     @Override
     public void onSendMessageSuccess() {
         mETxtMessage.setText("");
-        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Message sent", Toast.LENGTH_SHORT).show();
+        showToastShort("Message sent");
     }
 
     @Override
     public void onSendMessageFailure(String message) {
-        Toast.makeText(FirebaseChatMainApp.getAppContext(), message, Toast.LENGTH_SHORT).show();
+        showAlertMessage(message);
     }
 
     @Override
@@ -143,7 +140,6 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     @Override
     public void onGetMessagesFailure(String message) {
         Logger.vLog(TAG, "onGetMessagesFailure()", true);
-        Toast.makeText(FirebaseChatMainApp.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe

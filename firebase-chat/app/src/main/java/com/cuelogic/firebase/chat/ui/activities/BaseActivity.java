@@ -1,13 +1,16 @@
 package com.cuelogic.firebase.chat.ui.activities;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.cuelogic.firebase.chat.BuildConfig;
 import com.cuelogic.firebase.chat.R;
@@ -114,5 +117,23 @@ public class BaseActivity extends AppCompatActivity {
                 ContextCompat.getColor(this, R.color.colorPrimary);
 
         mToolbar.setBackgroundColor(color);
+    }
+
+    public void showToastShort(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+    public void showToastLong(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+    public void showAlertMessage(String message) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 }
