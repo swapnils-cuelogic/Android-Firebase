@@ -2,7 +2,7 @@ package com.cuelogic.firebase.chat.core.registration;
 
 import android.app.Activity;
 
-import com.google.firebase.auth.FirebaseUser;
+import com.cuelogic.firebase.chat.models.User;
 
 public class RegisterPresenter implements RegisterContract.Presenter, RegisterContract.OnRegistrationListener {
     private RegisterContract.View mRegisterView;
@@ -19,8 +19,8 @@ public class RegisterPresenter implements RegisterContract.Presenter, RegisterCo
     }
 
     @Override
-    public void onSuccess(FirebaseUser firebaseUser) {
-        mRegisterView.onRegistrationSuccess(firebaseUser);
+    public void onSuccess(User user) {
+        mRegisterView.onRegistrationSuccess(user);
     }
 
     @Override

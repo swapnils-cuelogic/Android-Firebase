@@ -4,11 +4,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -17,13 +16,20 @@ import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.logout.LogoutContract;
 import com.cuelogic.firebase.chat.core.logout.LogoutPresenter;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingPagerAdapter;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class UserListingActivity extends AppCompatActivity implements LogoutContract.View {
-    private Toolbar mToolbar;
+public class UserListingActivity extends BaseActivity implements LogoutContract.View {
     private TabLayout mTabLayoutUserListing;
     private ViewPager mViewPagerUserListing;
 
     private LogoutPresenter mLogoutPresenter;
+    private GoogleApiClient mGoogleApiClient;
 
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, UserListingActivity.class);
@@ -38,21 +44,29 @@ public class UserListingActivity extends AppCompatActivity implements LogoutCont
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_listing);
-        bindViews();
+        super.onCreate(savedInstanceState);
         init();
     }
 
-    private void bindViews() {
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+    private void init() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                    }
+                } /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
         mTabLayoutUserListing = (TabLayout) findViewById(R.id.tab_layout_user_listing);
         mViewPagerUserListing = (ViewPager) findViewById(R.id.view_pager_user_listing);
-    }
-
-    private void init() {
-        // set the toolbar
-        setSupportActionBar(mToolbar);
 
         // set the view pager adapter
         UserListingPagerAdapter userListingPagerAdapter = new UserListingPagerAdapter(getSupportFragmentManager());
@@ -103,8 +117,15 @@ public class UserListingActivity extends AppCompatActivity implements LogoutCont
     @Override
     public void onLogoutSuccess(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        LoginActivity.startIntent(this,
-                Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        FirebaseAuth.getInstance().signOut();
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        GoogleSignInActivity.startIntent(UserListingActivity.this,
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    }
+                });
     }
 
     @Override

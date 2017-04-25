@@ -2,11 +2,11 @@ package com.cuelogic.firebase.chat.core.registration;
 
 import android.app.Activity;
 
-import com.google.firebase.auth.FirebaseUser;
+import com.cuelogic.firebase.chat.models.User;
 
 public interface RegisterContract {
     interface View {
-        void onRegistrationSuccess(FirebaseUser firebaseUser);
+        void onRegistrationSuccess(User user);
 
         void onRegistrationFailure(String message);
     }
@@ -20,7 +20,7 @@ public interface RegisterContract {
     }
 
     interface OnRegistrationListener {
-        void onSuccess(FirebaseUser firebaseUser);
+        void onSuccess(User user);
 
         void onFailure(String message);
     }

@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.ChatContract;
 import com.cuelogic.firebase.chat.core.chat.ChatPresenter;
@@ -123,12 +124,12 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     @Override
     public void onSendMessageSuccess() {
         mETxtMessage.setText("");
-        Toast.makeText(getActivity(), "Message sent", Toast.LENGTH_SHORT).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), "Message sent", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSendMessageFailure(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -149,7 +150,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     @Override
     public void onGetMessagesFailure(String message) {
         Logger.vLog(TAG, "onGetMessagesFailure()", true);
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(FirebaseChatMainApp.getAppContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe

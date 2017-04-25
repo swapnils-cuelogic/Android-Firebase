@@ -4,7 +4,12 @@ import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.cuelogic.firebase.chat.FirebaseChatMainApp;
+import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.utils.Constants;
+import com.cuelogic.firebase.chat.utils.SharedPrefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,23 +38,42 @@ public class RegisterInteractor implements RegisterContract.Interactor {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (task.isSuccessful()) {
-                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
                             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                     .setDisplayName(displayName)
                                     //.setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
                                     .build();
 
-                            user.updateProfile(profileUpdates)
+                            firebaseUser.updateProfile(profileUpdates)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if (task.isSuccessful()) {
-                                                // Add the user to users table.
-                                                /*DatabaseReference database= FirebaseDatabase.getInstance().getReference();
-                                                User user = new User(task.getResult().getUser().getUid(), email);
-                                                database.child("users").push().setValue(user);*/
-                                                mOnRegistrationListener.onSuccess(user);
+
+                                                final FirebaseAuth auth = FirebaseAuth.getInstance();
+
+                                                auth.getCurrentUser()
+                                                        .reload()
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                                                                // Add the user to users table.
+                                                                //DatabaseReference database= FirebaseDatabase.getInstance().getReference();
+                                                                //User user = new User(task.getResult().getUser().getUid(), email);
+                                                                //database.child("users").push().setValue(user);
+
+                                                                User user = new User(firebaseUser.getUid(),
+                                                                        firebaseUser.getEmail(),
+                                                                        new SharedPrefUtil(FirebaseChatMainApp.getAppContext()).getString(Constants.ARG_FIREBASE_TOKEN),
+                                                                        displayName);
+
+                                                                mOnRegistrationListener.onSuccess(user);
+                                                            }
+                                                        });
                                             } else {
                                                 mOnRegistrationListener.onFailure(task.getException().getMessage());
                                             }
