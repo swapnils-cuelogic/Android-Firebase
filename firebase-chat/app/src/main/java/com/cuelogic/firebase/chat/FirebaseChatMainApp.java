@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.cuelogic.firebase.chat.database.DatabaseHelper;
+import com.google.firebase.database.FirebaseDatabase;
 
 //http://www.crazyhitty.com/one-to-one-chat-using-firebase-for-android/
 public class FirebaseChatMainApp extends Application {
@@ -29,6 +30,7 @@ public class FirebaseChatMainApp extends Application {
         super.onCreate();
         databaseHelper = DatabaseHelper.getDatabaseHelper(this);
         mContext = FirebaseChatMainApp.this;
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
     }
 
     public DatabaseHelper getDatabaseHelper() {
