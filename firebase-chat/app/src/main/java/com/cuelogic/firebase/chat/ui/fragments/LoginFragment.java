@@ -93,7 +93,7 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
     @Override
     public void onLoginSuccess(String message) {
         mProgressDialog.dismiss();
-        showToastShort("Logged in successfully");
+        showToastShort(getString(R.string.logged_in_successfully));
         UserListingActivity.startActivity(getActivity(),
                 Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     }

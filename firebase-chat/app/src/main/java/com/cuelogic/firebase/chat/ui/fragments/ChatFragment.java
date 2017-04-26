@@ -42,7 +42,6 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
     private ChatPresenter mChatPresenter;
 
     public static ChatFragment newInstance(User user) {
-        Logger.vLog(TAG, "newInstance()", true);
         Bundle args = new Bundle();
         args.putParcelable(Constants.ARG_USER, user);
         ChatFragment fragment = new ChatFragment();
@@ -117,7 +116,7 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
     @Override
     public void onSendMessageSuccess() {
         mETxtMessage.setText("");
-        showToastShort("Message sent");
+        showToastShort(getString(R.string.message_sent));
     }
 
     @Override
@@ -128,7 +127,6 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
     @Override
     public void onGetMessagesSuccess(Chat chat) {
         mProgressDialog.dismiss();
-        Logger.vLog(TAG, "onGetMessagesSuccess()", true);
         if (mChatRecyclerAdapter == null) {
             mChatRecyclerAdapter = new ChatRecyclerAdapter(new ArrayList<Chat>());
             mRecyclerViewChat.setAdapter(mChatRecyclerAdapter);
@@ -139,12 +137,10 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
 
     @Override
     public void onGetMessagesFailure(String message) {
-        Logger.vLog(TAG, "onGetMessagesFailure()", true);
     }
 
     @Subscribe
     public void onPushNotificationEvent(PushNotificationEvent pushNotificationEvent) {
-        Logger.vLog(TAG, "onPushNotificationEvent()", true);
         if (mChatRecyclerAdapter == null || mChatRecyclerAdapter.getItemCount() == 0) {
             mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                     pushNotificationEvent.getUid());

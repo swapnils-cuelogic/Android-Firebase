@@ -21,8 +21,10 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
-    private static final String IS_TO_APPLY_COLOR = "is_to_apply_color";
+    private static final String IS_TO_APPLY_TOOLBAR = "is_to_apply_toolbar";
     private static final String TOOLBAR_COLOR = "toolbar_color";
+    private static final String IS_TO_APPLY_BACKGROUND = "is_to_apply_background";
+    private static final String BACKGROUND_COLOR = "background_color";
 
     protected Toolbar mToolbar;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
@@ -75,7 +77,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     private void readFirebaseRemoteConfig() {
-        updateToolbar();
+        updateRemoteConfig();
 
         long cacheExpiration = 3600; // 1 hour in seconds.
         // If in developer mode cacheExpiration is set to 0 so each fetch will retrieve values from
@@ -108,15 +110,20 @@ public class BaseActivity extends AppCompatActivity {
 
     }
 
-    private void updateToolbar() {
-        // check whether to apply color
-        boolean isPromoOn = mFirebaseRemoteConfig.getBoolean(IS_TO_APPLY_COLOR);
+    private void updateRemoteConfig() {
+        boolean isToApplyToolbar = mFirebaseRemoteConfig.getBoolean(IS_TO_APPLY_TOOLBAR);
 
-        // use remote value if promo is on, otherwise, use the default config value.
-        int color = isPromoOn ? Color.parseColor(mFirebaseRemoteConfig.getString(TOOLBAR_COLOR)) :
+        int toolbarColor = isToApplyToolbar ? Color.parseColor(mFirebaseRemoteConfig.getString(TOOLBAR_COLOR)) :
                 ContextCompat.getColor(this, R.color.colorPrimary);
 
-        mToolbar.setBackgroundColor(color);
+        mToolbar.setBackgroundColor(toolbarColor);
+
+        boolean isToApplyBackground = mFirebaseRemoteConfig.getBoolean(IS_TO_APPLY_BACKGROUND);
+
+        int backgroundColor = isToApplyBackground ? Color.parseColor(mFirebaseRemoteConfig.getString(BACKGROUND_COLOR)) :
+                ContextCompat.getColor(this, R.color.white);
+
+        findViewById(android.R.id.content).setBackgroundColor(backgroundColor);
     }
 
     public void showToastShort(String message) {

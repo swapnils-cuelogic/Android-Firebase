@@ -47,10 +47,10 @@ public class ChatActivity extends BaseActivity {
                 fragmentTransaction.commit();
             } else {
                 onBackPressed();
-                showToastShort("Invalid users data found");
+                showToastShort(getString(R.string.invalid_users_data));
             }
         } else {
-            showToastShort("Invalid user session, Please login.");
+            showToastShort(getString(R.string.invalid_user_session));
             GoogleSignInActivity.startIntent(ChatActivity.this,
                     Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         }

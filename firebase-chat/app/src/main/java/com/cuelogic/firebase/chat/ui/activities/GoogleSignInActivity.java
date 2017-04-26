@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.View;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
@@ -63,7 +62,7 @@ public class GoogleSignInActivity extends BaseActivity {
         mProgressDialog.setTitle(getString(R.string.loading));
         mProgressDialog.setMessage(getString(R.string.please_wait));
         mProgressDialog.setIndeterminate(true);
-
+        mProgressDialog.setCancelable(false);
 
         signInButton = (com.google.android.gms.common.SignInButton) findViewById(R.id.sign_in_button);
 
@@ -146,10 +145,10 @@ public class GoogleSignInActivity extends BaseActivity {
                     firebaseAuthWithGoogle(account);
                 } else {
                     Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                    showAlertMessage("Please login using Cuelogic email id.");
+                    showAlertMessage(getString(R.string.invalid_email_id));
                 }
             } else {
-                showToastShort("Google Sign In failed, update UI appropriately");
+                showToastShort(getString(R.string.google_sign_in_failed));
             }
         }
     }
@@ -169,8 +168,6 @@ public class GoogleSignInActivity extends BaseActivity {
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
-        Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-
         mProgressDialog.show();
 
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
@@ -178,8 +175,6 @@ public class GoogleSignInActivity extends BaseActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
-
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -203,8 +198,7 @@ public class GoogleSignInActivity extends BaseActivity {
                             addUserToDatabase(user);
                         } else {
                             mProgressDialog.dismiss();
-                            Log.w(TAG, "signInWithCredential", task.getException());
-                            showAlertMessage("Authentication failed.");
+                            showAlertMessage(getString(R.string.authentication_failed));
                         }
                     }
                 });
@@ -221,7 +215,7 @@ public class GoogleSignInActivity extends BaseActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             mProgressDialog.dismiss();
-                            showToastShort("Logged in successfully");
+                            showToastShort(getString(R.string.logged_in_successfully));
                             UserListingActivity.startActivity(GoogleSignInActivity.this, Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         } else {
                             mProgressDialog.dismiss();

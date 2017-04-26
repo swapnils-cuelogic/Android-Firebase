@@ -121,7 +121,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onRegistrationSuccess(User user) {
         mProgressDialog.setMessage(getString(R.string.adding_user_to_db));
-        showToastShort("Registration Successful!");
+        showToastShort(getString(R.string.registration_successful));
         mAddUserPresenter.addUser(getActivity().getApplicationContext(), user);
     }
 
@@ -129,8 +129,7 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
     public void onRegistrationFailure(String message) {
         mProgressDialog.dismiss();
         mProgressDialog.setMessage(getString(R.string.please_wait));
-        Log.e(TAG, "onRegistrationFailure: " + message);
-        showAlertMessage("Registration failed!\n" + message);
+        showAlertMessage(getString(R.string.registration_failed)+"\n" + message);
     }
 
     @Override

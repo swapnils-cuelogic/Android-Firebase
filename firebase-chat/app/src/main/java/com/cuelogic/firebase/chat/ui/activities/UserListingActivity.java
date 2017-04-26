@@ -49,6 +49,8 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
     }
 
     private void init() {
+        mToolbar.setTitle(getString(R.string.users));
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()

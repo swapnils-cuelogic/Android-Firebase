@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <defaultsMap>
     <entry>
-        <key>discount</key>
-        <value>0</value>
-    </entry>
-    <entry>
-        <key>is_to_apply_color</key>
+        <key>is_to_apply_toolbar</key>
         <value>false</value>
     </entry>
     <entry>
         <key>toolbar_color</key>
         <value>#7d62d9</value>
+    </entry>
+    <entry>
+        <key>is_to_apply_background</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>toolbar_color</key>
+        <value>#FFFFFF</value>
     </entry>
 </defaultsMap>
