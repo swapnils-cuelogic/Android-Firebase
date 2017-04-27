@@ -92,6 +92,7 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
         mETxtMessage.setOnEditorActionListener(this);
 
         mChatPresenter = new ChatPresenter(this);
+        mChatPresenter.syncMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
         mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
     }
 

@@ -169,4 +169,16 @@ public class ChatInteractor implements ChatContract.Interactor {
             }
         });
     }
+
+    @Override
+    public void syncMessageFromFirebaseUser(String senderUid, String receiverUid) {
+        String room_type_1 = senderUid + "_" + receiverUid;
+        String room_type_2 = receiverUid + "_" + senderUid;
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child(Constants.ARG_CHAT_ROOMS)
+                .child(room_type_1).getRef().keepSynced(true);
+        databaseReference.child(Constants.ARG_CHAT_ROOMS)
+                .child(room_type_2).getRef().keepSynced(true);
+    }
 }
