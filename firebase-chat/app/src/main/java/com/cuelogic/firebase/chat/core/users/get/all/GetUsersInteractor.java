@@ -23,11 +23,10 @@ public class GetUsersInteractor implements GetUsersContract.Interactor {
         this.mOnGetAllUsersListener = onGetAllUsersListener;
     }
 
-
     @Override
     public void getAllUsersFromFirebase() {
         FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).getRef().keepSynced(true);
-        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Iterator<DataSnapshot> dataSnapshots = dataSnapshot.getChildren().iterator();

@@ -21,6 +21,9 @@ public class ChatInteractor implements ChatContract.Interactor {
     private ChatContract.OnSendMessageListener mOnSendMessageListener;
     private ChatContract.OnGetMessagesListener mOnGetMessagesListener;
 
+    public ChatInteractor() {
+    }
+
     public ChatInteractor(ChatContract.OnSendMessageListener onSendMessageListener) {
         this.mOnSendMessageListener = onSendMessageListener;
     }

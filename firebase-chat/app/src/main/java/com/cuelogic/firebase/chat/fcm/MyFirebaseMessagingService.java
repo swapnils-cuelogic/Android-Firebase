@@ -11,10 +11,12 @@ import android.util.Log;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
+import com.cuelogic.firebase.chat.core.chat.ChatInteractor;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.activities.ChatActivity;
 import com.cuelogic.firebase.chat.utils.Constants;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -45,6 +47,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String username = remoteMessage.getData().get("username");
             String uid = remoteMessage.getData().get("uid");
             String fcmToken = remoteMessage.getData().get("fcm_token");
+
+            //To get sync chat with real time database on push notification received
+            if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                new ChatInteractor().syncMessageFromFirebaseUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), uid);
 
             // Don't show notification if chat activity is open.
             if (!FirebaseChatMainApp.isChattingWithSameUser(uid)) {

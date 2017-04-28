@@ -20,15 +20,12 @@ import com.cuelogic.firebase.chat.models.Chat;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.adapters.ChatRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
-import com.cuelogic.firebase.chat.utils.Logger;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-
-import static com.google.android.gms.internal.zzs.TAG;
 
 public class ChatFragment extends BaseFragment implements ChatContract.View, TextView.OnEditorActionListener {
     private User user;

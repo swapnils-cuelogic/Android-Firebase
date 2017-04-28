@@ -100,7 +100,7 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-        mUserListingRecyclerAdapter = new UserListingRecyclerAdapter(users);
+        mUserListingRecyclerAdapter = new UserListingRecyclerAdapter(mContext, users);
         mRecyclerViewAllUserListing.setAdapter(mUserListingRecyclerAdapter);
         mUserListingRecyclerAdapter.notifyDataSetChanged();
     }
