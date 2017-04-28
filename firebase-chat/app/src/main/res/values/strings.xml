@@ -1,6 +1,5 @@
 <resources>
-    <string name="cuelogic_firebase_chat">Cuelogic Firebase Chat</string>
-    <string name="app_name">Firebase Chat</string>
+    <string name="app_name">Cue Connect</string>
     <string name="users">Users</string>
     <string name="action_settings">Settings</string>
     <string name="email">Email Id</string>

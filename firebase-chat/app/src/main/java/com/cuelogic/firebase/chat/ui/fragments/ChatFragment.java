@@ -20,6 +20,7 @@ import com.cuelogic.firebase.chat.models.Chat;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.adapters.ChatRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
+import com.cuelogic.firebase.chat.utils.StringUtils;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.greenrobot.eventbus.EventBus;
@@ -104,17 +105,19 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
 
     private void sendMessage() {
         String message = mETxtMessage.getText().toString();
-        String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-        String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-        String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        Chat chat = new Chat(sender, user.email, senderUid, user.uid, message, System.currentTimeMillis(), displayName);
-        mChatPresenter.sendMessage(getActivity().getApplicationContext(), chat, user.firebaseToken);
+        if(StringUtils.isNotEmptyNotNull(message.trim())) {
+            String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+            String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Chat chat = new Chat(sender, user.email, senderUid, user.uid, message, System.currentTimeMillis(), displayName);
+            mChatPresenter.sendMessage(getActivity().getApplicationContext(), chat, user.firebaseToken);
+        }
     }
 
     @Override
     public void onSendMessageSuccess() {
         mETxtMessage.setText("");
-        showToastShort(getString(R.string.message_sent));
+        //showToastShort(getString(R.string.message_sent));
     }
 
     @Override
@@ -130,7 +133,8 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
             mRecyclerViewChat.setAdapter(mChatRecyclerAdapter);
         }
         mChatRecyclerAdapter.add(chat);
-        mRecyclerViewChat.smoothScrollToPosition(mChatRecyclerAdapter.getItemCount() - 1);
+        mRecyclerViewChat.scrollToPosition(mChatRecyclerAdapter.getItemCount() - 1);
+        //mRecyclerViewChat.smoothScrollToPosition(mChatRecyclerAdapter.getItemCount() - 1);
     }
 
     @Override
