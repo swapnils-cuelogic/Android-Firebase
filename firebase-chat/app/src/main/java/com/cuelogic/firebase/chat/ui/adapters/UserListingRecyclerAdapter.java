@@ -1,5 +1,6 @@
 package com.cuelogic.firebase.chat.ui.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +9,19 @@ import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.utils.StringUtils;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListingRecyclerAdapter.ViewHolder> {
+    private Context mContext;
     private List<User> mUsers;
 
-    public UserListingRecyclerAdapter(List<User> users) {
+    public UserListingRecyclerAdapter(Context context, List<User> users) {
+        this.mContext = context;
         this.mUsers = users;
     }
 
@@ -33,9 +40,13 @@ public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListing
     public void onBindViewHolder(ViewHolder holder, int position) {
         User user = mUsers.get(position);
         try {
-            String alphabet = user.email.substring(0, 1);
+            //String alphabet = user.email.substring(0, 1);
             holder.txtUsername.setText(user.displayName != null ? user.displayName : user.email);
-            holder.txtUserAlphabet.setText(alphabet);
+            if(StringUtils.isNotEmptyNotNull(user.photoUrl)) {
+                Picasso.with(mContext).load(user.photoUrl).into(holder.profileImage);
+            } else {
+                //TODO code set alphabet
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,11 +65,12 @@ public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListing
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txtUserAlphabet, txtUsername;
+        private TextView txtUsername;
+        private CircleImageView profileImage;
 
         ViewHolder(View itemView) {
             super(itemView);
-            txtUserAlphabet = (TextView) itemView.findViewById(R.id.text_view_user_alphabet);
+            profileImage = (CircleImageView) itemView.findViewById(R.id.profile_image);
             txtUsername = (TextView) itemView.findViewById(R.id.text_view_username);
         }
     }

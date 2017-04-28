@@ -4,13 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.widget.Toast;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.fragments.ChatFragment;
 import com.cuelogic.firebase.chat.utils.Constants;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ChatActivity extends BaseActivity {
     private User user;
@@ -32,16 +32,27 @@ public class ChatActivity extends BaseActivity {
 
     private void init() {
         user = getIntent().getParcelableExtra(Constants.ARG_USER);
-        if(user != null) {
-            // set toolbar title
-            mToolbar.setTitle(user.displayName != null ? user.displayName : user.email);
-            // set the register screen fragment
-            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.frame_layout_content_chat, ChatFragment.newInstance(user), ChatFragment.class.getSimpleName());
-            fragmentTransaction.commit();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            if (user != null) {
+                // set toolbar title
+                mToolbar.setTitle(user.displayName != null ? user.displayName : user.email);
+
+                if (user.email != null) {
+                    mToolbar.setSubtitle(user.email);
+                }
+                enableBackButton();
+                // set the register screen fragment
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.frame_layout_content_chat, ChatFragment.newInstance(user), ChatFragment.class.getSimpleName());
+                fragmentTransaction.commit();
+            } else {
+                onBackPressed();
+                showToastShort(getString(R.string.invalid_users_data));
+            }
         } else {
-            onBackPressed();
-            Toast.makeText(this, "Invalid users data found", Toast.LENGTH_SHORT).show();
+            showToastShort(getString(R.string.invalid_user_session));
+            GoogleSignInActivity.startIntent(ChatActivity.this,
+                    Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         }
     }
 

@@ -3,7 +3,6 @@ package com.cuelogic.firebase.chat.ui.fragments;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -12,7 +11,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.ChatContract;
@@ -22,7 +20,6 @@ import com.cuelogic.firebase.chat.models.Chat;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.adapters.ChatRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
-import com.cuelogic.firebase.chat.utils.Logger;
 import com.google.firebase.auth.FirebaseAuth;
 
 import org.greenrobot.eventbus.EventBus;
@@ -30,9 +27,7 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 
-import static com.google.android.gms.internal.zzs.TAG;
-
-public class ChatFragment extends Fragment implements ChatContract.View, TextView.OnEditorActionListener {
+public class ChatFragment extends BaseFragment implements ChatContract.View, TextView.OnEditorActionListener {
     private User user;
     private RecyclerView mRecyclerViewChat;
     private EditText mETxtMessage;
@@ -44,7 +39,6 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     private ChatPresenter mChatPresenter;
 
     public static ChatFragment newInstance(User user) {
-        Logger.vLog(TAG, "newInstance()", true);
         Bundle args = new Bundle();
         args.putParcelable(Constants.ARG_USER, user);
         ChatFragment fragment = new ChatFragment();
@@ -95,6 +89,7 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
         mETxtMessage.setOnEditorActionListener(this);
 
         mChatPresenter = new ChatPresenter(this);
+        mChatPresenter.syncMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
         mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
     }
 
@@ -119,18 +114,17 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
     @Override
     public void onSendMessageSuccess() {
         mETxtMessage.setText("");
-        Toast.makeText(getActivity(), "Message sent", Toast.LENGTH_SHORT).show();
+        showToastShort(getString(R.string.message_sent));
     }
 
     @Override
     public void onSendMessageFailure(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+        showAlertMessage(message);
     }
 
     @Override
     public void onGetMessagesSuccess(Chat chat) {
         mProgressDialog.dismiss();
-        Logger.vLog(TAG, "onGetMessagesSuccess()", true);
         if (mChatRecyclerAdapter == null) {
             mChatRecyclerAdapter = new ChatRecyclerAdapter(new ArrayList<Chat>());
             mRecyclerViewChat.setAdapter(mChatRecyclerAdapter);
@@ -141,13 +135,10 @@ public class ChatFragment extends Fragment implements ChatContract.View, TextVie
 
     @Override
     public void onGetMessagesFailure(String message) {
-        Logger.vLog(TAG, "onGetMessagesFailure()", true);
-        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe
     public void onPushNotificationEvent(PushNotificationEvent pushNotificationEvent) {
-        Logger.vLog(TAG, "onPushNotificationEvent()", true);
         if (mChatRecyclerAdapter == null || mChatRecyclerAdapter.getItemCount() == 0) {
             mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                     pushNotificationEvent.getUid());

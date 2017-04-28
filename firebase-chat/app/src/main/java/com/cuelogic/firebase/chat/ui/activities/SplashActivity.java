@@ -28,7 +28,7 @@ public class SplashActivity extends AppCompatActivity {
                     UserListingActivity.startActivity(SplashActivity.this);
                 } else {
                     // otherwise redirect the user to login activity
-                    LoginActivity.startIntent(SplashActivity.this);
+                    GoogleSignInActivity.startIntent(SplashActivity.this);
                 }
                 finish();
             }

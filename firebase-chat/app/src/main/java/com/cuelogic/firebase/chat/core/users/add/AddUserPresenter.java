@@ -2,7 +2,7 @@ package com.cuelogic.firebase.chat.core.users.add;
 
 import android.content.Context;
 
-import com.google.firebase.auth.FirebaseUser;
+import com.cuelogic.firebase.chat.models.User;
 
 public class AddUserPresenter implements AddUserContract.Presenter, AddUserContract.OnUserDatabaseListener {
     private AddUserContract.View mView;
@@ -14,8 +14,8 @@ public class AddUserPresenter implements AddUserContract.Presenter, AddUserContr
     }
 
     @Override
-    public void addUser(Context context, FirebaseUser firebaseUser) {
-        mAddUserInteractor.addUserToDatabase(context, firebaseUser);
+    public void addUser(Context context, User user) {
+        mAddUserInteractor.addUserToDatabase(context, user);
     }
 
     @Override

@@ -8,6 +8,7 @@
     <color name="chatTextMe">#ffffff</color>
     <color name="chatBubbleOther">#26c6da</color>
     <color name="chatTextOther">#ffffff</color>
+    <color name="border">#808080</color>
 
     <color name="red_50">#FFEBEE</color>
     <color name="red_100">#FFCDD2</color>

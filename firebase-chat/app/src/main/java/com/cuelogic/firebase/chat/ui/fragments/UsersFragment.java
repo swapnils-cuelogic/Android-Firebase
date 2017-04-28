@@ -2,14 +2,12 @@ package com.cuelogic.firebase.chat.ui.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersContract;
@@ -21,7 +19,7 @@ import com.cuelogic.firebase.chat.utils.ItemClickSupport;
 
 import java.util.List;
 
-public class UsersFragment extends Fragment implements GetUsersContract.View, ItemClickSupport.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class UsersFragment extends BaseFragment implements GetUsersContract.View, ItemClickSupport.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String ARG_TYPE = "type";
     public static final String TYPE_CHATS = "type_chats";
     public static final String TYPE_ALL = "type_all";
@@ -102,7 +100,7 @@ public class UsersFragment extends Fragment implements GetUsersContract.View, It
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-        mUserListingRecyclerAdapter = new UserListingRecyclerAdapter(users);
+        mUserListingRecyclerAdapter = new UserListingRecyclerAdapter(mContext, users);
         mRecyclerViewAllUserListing.setAdapter(mUserListingRecyclerAdapter);
         mUserListingRecyclerAdapter.notifyDataSetChanged();
     }
@@ -115,7 +113,7 @@ public class UsersFragment extends Fragment implements GetUsersContract.View, It
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
-        Toast.makeText(getActivity(), "Error: " + message, Toast.LENGTH_SHORT).show();
+        showAlertMessage("Error: " + message);
     }
 
     @Override

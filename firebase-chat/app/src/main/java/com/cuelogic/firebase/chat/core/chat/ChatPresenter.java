@@ -25,6 +25,11 @@ public class ChatPresenter implements ChatContract.Presenter, ChatContract.OnSen
     }
 
     @Override
+    public void syncMessage(String senderUid, String receiverUid) {
+        mChatInteractor.syncMessageFromFirebaseUser(senderUid, receiverUid);
+    }
+
+    @Override
     public void onSendMessageSuccess() {
         mView.onSendMessageSuccess();
     }

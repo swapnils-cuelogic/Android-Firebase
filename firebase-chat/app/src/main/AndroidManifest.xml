@@ -12,6 +12,7 @@
         <activity
             android:name="com.cuelogic.firebase.chat.ui.activities.SplashActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,19 +22,23 @@
         </activity>
         <activity
             android:name="com.cuelogic.firebase.chat.ui.activities.LoginActivity"
-            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.cuelogic.firebase.chat.ui.activities.GoogleSignInActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.cuelogic.firebase.chat.ui.activities.RegisterActivity"
-            android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.cuelogic.firebase.chat.ui.activities.UserListingActivity"
-            android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.cuelogic.firebase.chat.ui.activities.ChatActivity"
-            android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name="com.cuelogic.firebase.chat.fcm.MyFirebaseMessagingService">

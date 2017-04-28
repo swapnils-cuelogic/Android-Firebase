@@ -21,6 +21,9 @@ public class ChatInteractor implements ChatContract.Interactor {
     private ChatContract.OnSendMessageListener mOnSendMessageListener;
     private ChatContract.OnGetMessagesListener mOnGetMessagesListener;
 
+    public ChatInteractor() {
+    }
+
     public ChatInteractor(ChatContract.OnSendMessageListener onSendMessageListener) {
         this.mOnSendMessageListener = onSendMessageListener;
     }
@@ -168,5 +171,17 @@ public class ChatInteractor implements ChatContract.Interactor {
                 Logger.vLog(TAG, "getMessageFromFirebaseUser: onCancelled", true);
             }
         });
+    }
+
+    @Override
+    public void syncMessageFromFirebaseUser(String senderUid, String receiverUid) {
+        String room_type_1 = senderUid + "_" + receiverUid;
+        String room_type_2 = receiverUid + "_" + senderUid;
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+        databaseReference.child(Constants.ARG_CHAT_ROOMS)
+                .child(room_type_1).getRef().keepSynced(true);
+        databaseReference.child(Constants.ARG_CHAT_ROOMS)
+                .child(room_type_2).getRef().keepSynced(true);
     }
 }
