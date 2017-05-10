@@ -34,7 +34,6 @@
             android:id="@+id/tab_layout_user_listing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             app:tabBackground="?attr/colorPrimary"
             app:tabGravity="fill"
             app:tabIndicatorColor="@color/cyan_A100"

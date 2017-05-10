@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
@@ -14,21 +15,34 @@ import android.view.MenuItem;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.logout.LogoutContract;
 import com.cuelogic.firebase.chat.core.logout.LogoutPresenter;
+import com.cuelogic.firebase.chat.listeners.GroupActionListener;
+import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingPagerAdapter;
+import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-public class UserListingActivity extends BaseActivity implements LogoutContract.View {
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserListingActivity extends BaseActivity implements LogoutContract.View, GroupActionListener {
     private TabLayout mTabLayoutUserListing;
     private ViewPager mViewPagerUserListing;
 
     private LogoutPresenter mLogoutPresenter;
     private GoogleApiClient mGoogleApiClient;
+    private UserListingPagerAdapter userListingPagerAdapter;
 
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, UserListingActivity.class);
@@ -49,7 +63,8 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
     }
 
     private void init() {
-        mToolbar.setTitle(getString(R.string.users));
+        //mToolbar.startActionMode(mActionModeCallback);
+        //mToolbar.setTitle(getString(R.string.users));
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -70,8 +85,24 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
         mViewPagerUserListing = (ViewPager) findViewById(R.id.view_pager_user_listing);
 
         // set the view pager adapter
-        UserListingPagerAdapter userListingPagerAdapter = new UserListingPagerAdapter(getSupportFragmentManager());
+        userListingPagerAdapter = new UserListingPagerAdapter(getSupportFragmentManager());
         mViewPagerUserListing.setAdapter(userListingPagerAdapter);
+        mViewPagerUserListing.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         // attach tab layout with view pager
         mTabLayoutUserListing.setupWithViewPager(mViewPagerUserListing);
@@ -132,5 +163,52 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
     @Override
     public void onLogoutFailure(String message) {
         showAlertMessage(message);
+    }
+
+    //Return current fragment on basis of Position
+    public Fragment getFragment(int pos) {
+        return userListingPagerAdapter.getItem(pos);
+    }
+
+    @Override
+    public void onCreateGroupRequest(final Group group) {
+        showProgress();
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.ARG_ROOMS).child(group.roomId).keepSynced(true);
+        FirebaseDatabase.getInstance().getReference()
+                .child(Constants.ARG_ROOMS).child(group.roomId).setValue(group)
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()) {
+                    FirebaseDatabase.getInstance().getReference()
+                            .child(Constants.ARG_USERS).keepSynced(true);
+                    for (final String userId:
+                         group.users) {
+                        FirebaseDatabase.getInstance().getReference()
+                                .child(Constants.ARG_USERS).child(userId).child(Constants.ARG_ROOMS).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                List<String> existingRooms = (List<String>)dataSnapshot.getValue();
+                                if(existingRooms == null)
+                                    existingRooms = new ArrayList<>();
+                                existingRooms.add(group.roomId);
+                                FirebaseDatabase.getInstance().getReference()
+                                        .child(Constants.ARG_USERS).child(userId).child(Constants.ARG_ROOMS).setValue(existingRooms);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                    hideProgress();
+                } else {
+                    showToastShort(getString(R.string.error_group_creation));
+                    hideProgress();
+                }
+            }
+        });
     }
 }

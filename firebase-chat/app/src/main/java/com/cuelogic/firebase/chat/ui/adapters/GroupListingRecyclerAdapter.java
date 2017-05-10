@@ -10,47 +10,42 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
-import com.cuelogic.firebase.chat.models.User;
-import com.cuelogic.firebase.chat.utils.StringUtils;
-import com.squareup.picasso.Picasso;
+import com.cuelogic.firebase.chat.models.Group;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListingRecyclerAdapter.ViewHolder> {
+public class GroupListingRecyclerAdapter extends RecyclerView.Adapter<GroupListingRecyclerAdapter.ViewHolder> {
     private Context mContext;
-    private List<User> mUsers;
+    private List<Group> mGroups;
     private SparseBooleanArray mSelectedItemsIds;
 
-    public UserListingRecyclerAdapter(Context context, List<User> users) {
+    public GroupListingRecyclerAdapter(Context context, List<Group> groups) {
         this.mContext = context;
-        this.mUsers = users;
+        this.mGroups = groups;
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public void add(User user) {
-        mUsers.add(user);
-        notifyItemInserted(mUsers.size() - 1);
+    public void add(Group group) {
+        mGroups.add(group);
+        notifyItemInserted(mGroups.size() - 1);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_user_listing, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_group_listing, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        User user = mUsers.get(position);
+        Group group = mGroups.get(position);
         try {
             //String alphabet = user.email.substring(0, 1);
-            holder.txtUsername.setText(user.displayName != null ? user.displayName : user.email);
-            if(StringUtils.isNotEmptyNotNull(user.photoUrl)) {
-                Picasso.with(mContext).load(user.photoUrl).into(holder.profileImage);
-            } else {
-                //TODO code set alphabet
-            }
+            holder.txtGroupName.setText(group.displayName);
+            holder.txtMembers.setText(group.users.size()+" Members");
+            holder.groupImage.setImageResource(R.drawable.ic_group_white_24dp);
             /** Change background color of the selected items in list view  **/
             holder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? 0x9934B5E4 : Color.TRANSPARENT);
 
@@ -61,28 +56,30 @@ public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListing
 
     @Override
     public int getItemCount() {
-        if (mUsers != null) {
-            return mUsers.size();
+        if (mGroups != null) {
+            return mGroups.size();
         }
         return 0;
     }
 
-    public User getUser(int position) {
-        return mUsers.get(position);
+    public Group getUser(int position) {
+        return mGroups.get(position);
     }
 
-    public List<User> getUsers() {
-        return mUsers;
+    public List<Group> getUsers() {
+        return mGroups;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txtUsername;
-        private CircleImageView profileImage;
+        private TextView txtGroupName;
+        private TextView txtMembers;
+        private CircleImageView groupImage;
 
         ViewHolder(View itemView) {
             super(itemView);
-            profileImage = (CircleImageView) itemView.findViewById(R.id.profile_image);
-            txtUsername = (TextView) itemView.findViewById(R.id.text_view_username);
+            groupImage = (CircleImageView) itemView.findViewById(R.id.group_image);
+            txtGroupName = (TextView) itemView.findViewById(R.id.text_view_group_name);
+            txtMembers = (TextView) itemView.findViewById(R.id.text_view_members);
         }
     }
 

@@ -29,6 +29,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+
 public class GoogleSignInActivity extends BaseActivity {
     private static final String TAG = GoogleSignInActivity.class.getSimpleName();
     private static final int RC_SIGN_IN = 0;
@@ -207,9 +209,19 @@ public class GoogleSignInActivity extends BaseActivity {
     public void addUserToDatabase(User user) {
         mProgressDialog.setMessage(getString(R.string.adding_user_to_db));
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", user.uid);
+        result.put("displayName", user.displayName);
+        result.put("email", user.email);
+        result.put("photoUrl", user.photoUrl);
+        result.put("firebaseToken", user.firebaseToken);
+
+        database.child(Constants.ARG_USERS).keepSynced(true);
+
         database.child(Constants.ARG_USERS)
                 .child(user.uid)
-                .setValue(user)
+                .updateChildren(result)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

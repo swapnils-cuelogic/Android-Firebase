@@ -32,4 +32,10 @@
     <string name="message_sent">Message sent</string>
     <string name="registration_failed">Registration failed!</string>
     <string name="registration_successful">Registration Successful!</string>
+    <string name="create_group">Create Group</string>
+    <string name="hint_enter_group_name">Enter Group Name</string>
+    <string name="title_group_members">Group Members :</string>
+    <string name="button_create">Create</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="error_group_creation">Error occurred while group creation</string>
 </resources>

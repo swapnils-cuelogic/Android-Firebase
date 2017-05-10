@@ -1,5 +1,6 @@
 package com.cuelogic.firebase.chat.ui.activities;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ public class BaseActivity extends AppCompatActivity {
 
     protected Toolbar mToolbar;
     private FirebaseRemoteConfig mFirebaseRemoteConfig;
+    private ProgressDialog pDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,5 +144,27 @@ public class BaseActivity extends AppCompatActivity {
                     }
                 })
                 .show();
+    }
+
+    public void showProgress() {
+        showProgress(false);
+    }
+    public void showProgress(boolean cancelable) {
+        pDialog = getProgressDialogInstance();
+        pDialog.setCancelable(cancelable);
+        pDialog.show();
+    }
+    private ProgressDialog getProgressDialogInstance() {
+        if (pDialog == null) {
+            pDialog = new ProgressDialog(this);
+            pDialog.setTitle(getString(R.string.loading));
+            pDialog.setMessage(getString(R.string.please_wait));
+            pDialog.setIndeterminate(true);
+        }
+        return pDialog;
+    }
+    public void hideProgress() {
+        if (pDialog != null)
+            pDialog.dismiss();
     }
 }

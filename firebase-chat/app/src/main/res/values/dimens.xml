@@ -20,6 +20,12 @@
     <dimen name="margin_big">32dp</dimen>
     <dimen name="margin_huge">64dp</dimen>
 
+    <dimen name="height_smallest">30dp</dimen>
+    <dimen name="height_small">40dp</dimen>
+    <dimen name="height_medium">50dp</dimen>
+    <dimen name="height_large">65dp</dimen>
+    <dimen name="height_xlarge">80dp</dimen>
+
     <dimen name="user_icon_width">36dp</dimen>
     <dimen name="user_icon_height">36dp</dimen>
 
