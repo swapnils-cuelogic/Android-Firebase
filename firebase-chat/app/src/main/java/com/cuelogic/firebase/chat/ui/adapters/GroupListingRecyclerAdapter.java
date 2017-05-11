@@ -62,11 +62,11 @@ public class GroupListingRecyclerAdapter extends RecyclerView.Adapter<GroupListi
         return 0;
     }
 
-    public Group getUser(int position) {
+    public Group getGroup(int position) {
         return mGroups.get(position);
     }
 
-    public List<Group> getUsers() {
+    public List<Group> getGroups() {
         return mGroups;
     }
 

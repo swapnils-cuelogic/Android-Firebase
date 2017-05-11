@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.listeners.GroupActionListener;
 import com.cuelogic.firebase.chat.models.Group;
+import com.cuelogic.firebase.chat.models.GroupWithTokens;
 import com.cuelogic.firebase.chat.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -74,8 +75,8 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.buttonCreate :
                 if(isValidGroupInfo()) {
-                    Group group = createGropInfo();
-                    groupActionListener.onCreateGroupRequest(group);
+                    GroupWithTokens groupWithTokens = createGropInfo();
+                    groupActionListener.onCreateGroupRequest(groupWithTokens);
                     dismiss();
                 }
                 break;
@@ -95,16 +96,18 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
         return editTextGroupName.getError() == null;
     }
 
-    private Group createGropInfo() {
+    private GroupWithTokens createGropInfo() {
         String createdBy = FirebaseAuth.getInstance().getCurrentUser().getUid();
         long createdTime = System.currentTimeMillis();
         String roomId = FirebaseDatabase.getInstance().getReference().push().getKey();
         String displayName = editTextGroupName.getText().toString().trim();
         List<String> users = new ArrayList<>();
+        List<String> tokens = new ArrayList<>();
         for (User member:
              groupMembers) {
             users.add(member.uid);
+            tokens.add(member.firebaseToken);
         }
-        return new Group(roomId, displayName, createdTime, createdBy, createdTime, users);
+        return new GroupWithTokens(new Group(roomId, displayName, createdTime, createdBy, createdTime, users), tokens);
     }
 }

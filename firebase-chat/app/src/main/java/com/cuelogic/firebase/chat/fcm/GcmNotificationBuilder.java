@@ -15,7 +15,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class FcmNotificationBuilder {
+public class GcmNotificationBuilder {
 
     public static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     private static final String TAG = "FcmNotificationBuilder";
@@ -24,11 +24,11 @@ public class FcmNotificationBuilder {
     private static final String APPLICATION_JSON = "application/json";
     private static final String AUTHORIZATION = "Authorization";
     private static final String AUTH_KEY = "key=" + SERVER_API_KEY;
-    private static final String FCM_URL = "https://fcm.googleapis.com/fcm/send";
+    private static final String GCM_URL = "https://android.googleapis.com/gcm/notification";
 
     // json related keys
     private static final String KEY_TO = "to";
-    private static final String KEY_TYPE = "type";
+    private static final String KEY_NOTIFICATION = "notification";
     private static final String KEY_TITLE = "title";
     private static final String KEY_TEXT = "text";
     private static final String KEY_DATA = "data";
@@ -36,7 +36,6 @@ public class FcmNotificationBuilder {
     private static final String KEY_UID = "uid";
     private static final String KEY_FCM_TOKEN = "fcm_token";
 
-    private int mType = 1;
     private String mTitle;
     private String mMessage;
     private String mUsername;
@@ -44,45 +43,40 @@ public class FcmNotificationBuilder {
     private String mFirebaseToken;
     private String mReceiverFirebaseToken;
 
-    private FcmNotificationBuilder() {
+    private GcmNotificationBuilder() {
 
     }
 
-    public static FcmNotificationBuilder initialize() {
-        return new FcmNotificationBuilder();
+    public static GcmNotificationBuilder initialize() {
+        return new GcmNotificationBuilder();
     }
 
-    public FcmNotificationBuilder type(int type) {
-        mType = type;
-        return this;
-    }
-
-    public FcmNotificationBuilder title(String title) {
+    public GcmNotificationBuilder title(String title) {
         mTitle = title;
         return this;
     }
 
-    public FcmNotificationBuilder message(String message) {
+    public GcmNotificationBuilder message(String message) {
         mMessage = message;
         return this;
     }
 
-    public FcmNotificationBuilder username(String username) {
+    public GcmNotificationBuilder username(String username) {
         mUsername = username;
         return this;
     }
 
-    public FcmNotificationBuilder uid(String uid) {
+    public GcmNotificationBuilder uid(String uid) {
         mUid = uid;
         return this;
     }
 
-    public FcmNotificationBuilder firebaseToken(String firebaseToken) {
+    public GcmNotificationBuilder firebaseToken(String firebaseToken) {
         mFirebaseToken = firebaseToken;
         return this;
     }
 
-    public FcmNotificationBuilder receiverFirebaseToken(String receiverFirebaseToken) {
+    public GcmNotificationBuilder receiverFirebaseToken(String receiverFirebaseToken) {
         mReceiverFirebaseToken = receiverFirebaseToken;
         return this;
     }
@@ -97,7 +91,7 @@ public class FcmNotificationBuilder {
         Request request = new Request.Builder()
                 .addHeader(CONTENT_TYPE, APPLICATION_JSON)
                 .addHeader(AUTHORIZATION, AUTH_KEY)
-                .url(FCM_URL)
+                .url(GCM_URL)
                 .post(requestBody)
                 .build();
 
@@ -117,19 +111,14 @@ public class FcmNotificationBuilder {
 
     private JSONObject getValidJsonBody() throws JSONException {
         JSONObject jsonObjectBody = new JSONObject();
-        if(mType == 2) {
-            jsonObjectBody.put(KEY_TO, "/topics/"+mUid);
-        } else {
-            jsonObjectBody.put(KEY_TO, mReceiverFirebaseToken);
-        }
+        jsonObjectBody.put(KEY_TO, mReceiverFirebaseToken);
+
         JSONObject jsonObjectData = new JSONObject();
-        jsonObjectData.put(KEY_TYPE, mType);
         jsonObjectData.put(KEY_TITLE, mTitle);
         jsonObjectData.put(KEY_TEXT, mMessage);
         jsonObjectData.put(KEY_USERNAME, mUsername);
         jsonObjectData.put(KEY_UID, mUid);
         jsonObjectData.put(KEY_FCM_TOKEN, mFirebaseToken);
-
         jsonObjectBody.put(KEY_DATA, jsonObjectData);
 
         return jsonObjectBody;

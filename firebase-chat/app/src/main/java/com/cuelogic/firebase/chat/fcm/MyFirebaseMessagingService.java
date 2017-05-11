@@ -12,11 +12,18 @@ import android.util.Log;
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.ChatInteractor;
+import com.cuelogic.firebase.chat.core.chat.GroupChatInteractor;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
+import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.activities.ChatActivity;
+import com.cuelogic.firebase.chat.ui.activities.NewChatActivity;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -42,21 +49,36 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
+            int type = Integer.parseInt(remoteMessage.getData().get("type"));
             String title = remoteMessage.getData().get("title");
             String message = remoteMessage.getData().get("text");
-            String username = remoteMessage.getData().get("username");
             String uid = remoteMessage.getData().get("uid");
+            String username = remoteMessage.getData().get("username");
             String fcmToken = remoteMessage.getData().get("fcm_token");
 
-            //To get sync chat with real time database on push notification received
-            if(FirebaseAuth.getInstance().getCurrentUser() != null)
-                new ChatInteractor().syncMessageFromFirebaseUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), uid);
 
-            // Don't show notification if chat activity is open.
-            if (!FirebaseChatMainApp.isChattingWithSameUser(uid)) {
-                sendNotification(title, message, username, uid, fcmToken);
+            if(type == 2) {
+                //To get sync chat with real time database on push notification received
+                if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                    new GroupChatInteractor().syncMessageFromFirebaseUser(uid);
+
+                // Don't show notification if chat activity is open.
+                if (!FirebaseChatMainApp.isChattingWithSameUser(uid)) {
+                    sendGroupNotification(message, uid);
+                } else {
+                    EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                }
             } else {
-                EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                //To get sync chat with real time database on push notification received
+                if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                    new ChatInteractor().syncMessageFromFirebaseUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), uid);
+
+                // Don't show notification if chat activity is open.
+                if (!FirebaseChatMainApp.isChattingWithSameUser(uid)) {
+                    sendNotification(title, message, username, uid, fcmToken);
+                } else {
+                    EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                }
             }
         }
     }
@@ -84,5 +106,42 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(receiverUid, 0, notificationBuilder.build());
+    }
+    /**
+     * Create and show a simple notification containing the received FCM message.
+     */
+    private void sendGroupNotification(final String message, String roomId) {
+        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(roomId).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Group group = dataSnapshot.getValue(Group.class);
+                if(group != null) {
+                    Intent intent = new Intent(MyFirebaseMessagingService.this, NewChatActivity.class);
+                    intent.putExtra(Constants.ARG_GROUP, group);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(MyFirebaseMessagingService.this, 0, intent,
+                            PendingIntent.FLAG_ONE_SHOT);
+
+                    Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MyFirebaseMessagingService.this)
+                            .setSmallIcon(R.drawable.ic_messaging)
+                            .setContentTitle(group.displayName)
+                            .setContentText(message)
+                            .setAutoCancel(true)
+                            .setSound(defaultSoundUri)
+                            .setContentIntent(pendingIntent);
+
+                    NotificationManager notificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+                    notificationManager.notify(group.roomId, 0, notificationBuilder.build());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

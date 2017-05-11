@@ -13,6 +13,7 @@ import com.cuelogic.firebase.chat.core.users.get.all.GetUsersContract;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersPresenter;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.ui.activities.NewChatActivity;
 import com.cuelogic.firebase.chat.ui.adapters.GroupListingRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.ItemClickSupport;
@@ -97,7 +98,7 @@ public class GroupsFragment extends BaseFragment implements GetUsersContract.Vie
 
     @Override
     public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-        //ChatActivity.startActivity(getActivity(), mGroupListingRecyclerAdapter.getUser(position));
+        NewChatActivity.startActivity(getActivity(), mGroupListingRecyclerAdapter.getGroup(position));
     }
 
     @Override

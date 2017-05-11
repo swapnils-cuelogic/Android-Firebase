@@ -40,6 +40,10 @@
             android:name="com.cuelogic.firebase.chat.ui.activities.ChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="com.cuelogic.firebase.chat.ui.activities.NewChatActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name="com.cuelogic.firebase.chat.fcm.MyFirebaseMessagingService">
             <intent-filter>

@@ -15,8 +15,10 @@ import android.view.MenuItem;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.logout.LogoutContract;
 import com.cuelogic.firebase.chat.core.logout.LogoutPresenter;
+import com.cuelogic.firebase.chat.fcm.FcmTopicBuilder;
 import com.cuelogic.firebase.chat.listeners.GroupActionListener;
 import com.cuelogic.firebase.chat.models.Group;
+import com.cuelogic.firebase.chat.models.GroupWithTokens;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingPagerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.android.gms.auth.api.Auth;
@@ -171,8 +173,10 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
     }
 
     @Override
-    public void onCreateGroupRequest(final Group group) {
+    public void onCreateGroupRequest(GroupWithTokens groupWithTokens) {
         showProgress();
+        final Group group = groupWithTokens.group;
+        final List<String> tokens = groupWithTokens.tokens;
         FirebaseDatabase.getInstance().getReference()
                 .child(Constants.ARG_ROOMS).child(group.roomId).keepSynced(true);
         FirebaseDatabase.getInstance().getReference()
@@ -203,6 +207,13 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                             }
                         });
                     }
+
+                    String topicName = "/topics/"+group.roomId;
+                    FcmTopicBuilder.initialize()
+                            .topicName(topicName)
+                            .tokens(tokens)
+                            .send();
+
                     hideProgress();
                 } else {
                     showToastShort(getString(R.string.error_group_creation));
