@@ -14,8 +14,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.List;
-
 public class GroupChatInteractor implements GroupChatContract.Interactor {
     private static final String TAG = "ChatInteractor";
 
@@ -40,7 +38,7 @@ public class GroupChatInteractor implements GroupChatContract.Interactor {
     }
 
     @Override
-    public void sendMessageToFirebaseUser(final Context context, final NewChat newChat, final List<String> receiverFirebaseTokens) {
+    public void sendMessageToFirebaseUser(final Context context, final NewChat newChat) {
         FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).keepSynced(true);
         String messageId = FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).push().getKey();
         FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).child(messageId).setValue(newChat).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -48,7 +46,7 @@ public class GroupChatInteractor implements GroupChatContract.Interactor {
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()) {
                     //Need to write this code to send notifications to all users
-                    sendPushNotificationToReceivers("Group Message", newChat.roomId, newChat.message);
+                    sendPushNotificationToReceivers("Group Message", newChat.roomId, newChat.message, newChat.timestamp);
                     mOnSendMessageListener.onSendMessageSuccess();
                 } else {
                     mOnSendMessageListener.onSendMessageFailure("Unable to send message: ");
@@ -58,10 +56,10 @@ public class GroupChatInteractor implements GroupChatContract.Interactor {
         });
     }
 
-    private void sendPushNotificationToReceivers(String title, String roomId, String message) {
+    private void sendPushNotificationToReceivers(String title, String roomId, String message, long timestamp) {
         FcmNotificationBuilder.initialize()
                 .type(2).title(title).message(message)
-                .uid(roomId)
+                .uid(roomId).timeStamp(timestamp)
                 .send();
     }
 

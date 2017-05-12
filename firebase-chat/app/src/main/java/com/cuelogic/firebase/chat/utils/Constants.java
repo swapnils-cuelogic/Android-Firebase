@@ -12,4 +12,6 @@ public interface Constants {
 
     boolean IS_APP_DEBUG = true;
     String APP_NAME = "FirebaseChatApp";
+
+    String ACTION_MESSAGE_RECEIVED = "com.cuelogic.firebase.chat.action_message_received";
 }

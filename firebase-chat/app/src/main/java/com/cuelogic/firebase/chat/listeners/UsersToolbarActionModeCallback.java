@@ -23,13 +23,13 @@ import java.util.List;
  * Created by Harshal Vibhandik on 05/05/17.
  */
 
-public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
+public class UsersToolbarActionModeCallback implements ActionMode.Callback {
     private Context mContext;
     private UserListingRecyclerAdapter userListingRecyclerAdapter;
     private List<User> usersList;
 
 
-    public Toolbar_ActionMode_Callback(Context context, UserListingRecyclerAdapter recyclerView_adapter, List<User> usersList) {
+    public UsersToolbarActionModeCallback(Context context, UserListingRecyclerAdapter recyclerView_adapter, List<User> usersList) {
         this.mContext = context;
         this.userListingRecyclerAdapter = recyclerView_adapter;
         this.usersList = usersList;
@@ -57,32 +57,41 @@ public class Toolbar_ActionMode_Callback implements ActionMode.Callback {
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+        //Get selected ids on basis of current fragment action mode
+        SparseBooleanArray selected = userListingRecyclerAdapter
+                .getSelectedIds();
+
+        int selectedMessageSize = selected.size();
+
+        List<User> selectedUsers = new ArrayList<>();
+        //Loop to all selected items
+        for (int i = (selectedMessageSize - 1); i >= 0; i--) {
+            if (selected.valueAt(i)) {
+                //get selected data in Model
+                User user = usersList.get(selected.keyAt(i));
+                //Print the data to show if its working properly or not
+                Logger.eLog("Selected Items", "Name - " + user.displayName);
+                selectedUsers.add(user);
+            }
+        }
+        mode.finish();//Finish action mode
+
+        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(0);//Get recycler view fragment
+
         switch (item.getItemId()) {
             case R.id.action_create_group:
-
-                //Get selected ids on basis of current fragment action mode
-                SparseBooleanArray selected = userListingRecyclerAdapter
-                            .getSelectedIds();
-
-                int selectedMessageSize = selected.size();
-
-                List<User> selectedUsers = new ArrayList<>();
-                //Loop to all selected items
-                for (int i = (selectedMessageSize - 1); i >= 0; i--) {
-                    if (selected.valueAt(i)) {
-                        //get selected data in Model
-                        User user = usersList.get(selected.keyAt(i));
-                        //Print the data to show if its working properly or not
-                        Logger.eLog("Selected Items", "Name - " + user.displayName);
-                        selectedUsers.add(user);
-                    }
-                }
-                mode.finish();//Finish action mode
-
-                Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(0);//Get recycler view fragment
                 if (recyclerFragment != null)
                     //If recycler fragment not null
                     ((UsersFragment) recyclerFragment).createGroupOfUsers(selectedUsers);
+                break;
+            case R.id.action_mute_notifications:
+                if (recyclerFragment != null)
+                    ((UsersFragment) recyclerFragment).muteNotifications(selectedUsers);
+                break;
+            case R.id.action_unmute_notifications:
+                if (recyclerFragment != null)
+                    ((UsersFragment) recyclerFragment).unmuteNotifications(selectedUsers);
                 break;
         }
         return false;

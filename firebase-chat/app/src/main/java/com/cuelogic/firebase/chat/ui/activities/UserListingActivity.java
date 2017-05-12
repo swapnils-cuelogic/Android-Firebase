@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.logout.LogoutContract;
 import com.cuelogic.firebase.chat.core.logout.LogoutPresenter;
@@ -20,6 +21,8 @@ import com.cuelogic.firebase.chat.listeners.GroupActionListener;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.GroupWithTokens;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingPagerAdapter;
+import com.cuelogic.firebase.chat.ui.fragments.GroupsFragment;
+import com.cuelogic.firebase.chat.ui.fragments.UsersFragment;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -102,7 +105,16 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
+                Fragment recyclerFragment0 = getFragment(0);//Get recycler fragment
+                if (recyclerFragment0 != null) {
+                    if(((UsersFragment) recyclerFragment0).getActionMode() != null)
+                        ((UsersFragment) recyclerFragment0).getActionMode().finish();
+                }
+                Fragment recyclerFragment1 = getFragment(1);//Get recycler fragment
+                if (recyclerFragment1 != null) {
+                    if(((GroupsFragment) recyclerFragment1).getActionMode() != null)
+                        ((GroupsFragment) recyclerFragment1).getActionMode().finish();
+                }
             }
         });
 
@@ -221,5 +233,17 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseChatMainApp.setRoomsActivityOpen(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        FirebaseChatMainApp.setRoomsActivityOpen(false);
     }
 }

@@ -38,4 +38,6 @@
     <string name="button_create">Create</string>
     <string name="button_cancel">Cancel</string>
     <string name="error_group_creation">Error occurred while group creation</string>
+    <string name="mute_notifications">Mute Notifications</string>
+    <string name="unmute_notifications">Unmute Notifications</string>
 </resources>

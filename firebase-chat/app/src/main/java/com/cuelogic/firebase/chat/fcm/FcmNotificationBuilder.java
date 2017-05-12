@@ -34,6 +34,7 @@ public class FcmNotificationBuilder {
     private static final String KEY_DATA = "data";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_UID = "uid";
+    private static final String KEY_TIMESTAMP = "timestamp";
     private static final String KEY_FCM_TOKEN = "fcm_token";
 
     private int mType = 1;
@@ -41,6 +42,7 @@ public class FcmNotificationBuilder {
     private String mMessage;
     private String mUsername;
     private String mUid;
+    private long mTimestamp;
     private String mFirebaseToken;
     private String mReceiverFirebaseToken;
 
@@ -74,6 +76,11 @@ public class FcmNotificationBuilder {
 
     public FcmNotificationBuilder uid(String uid) {
         mUid = uid;
+        return this;
+    }
+
+    public FcmNotificationBuilder timeStamp(long timestamp) {
+        mTimestamp = timestamp;
         return this;
     }
 
@@ -128,6 +135,7 @@ public class FcmNotificationBuilder {
         jsonObjectData.put(KEY_TEXT, mMessage);
         jsonObjectData.put(KEY_USERNAME, mUsername);
         jsonObjectData.put(KEY_UID, mUid);
+        jsonObjectData.put(KEY_TIMESTAMP, mTimestamp);
         jsonObjectData.put(KEY_FCM_TOKEN, mFirebaseToken);
 
         jsonObjectBody.put(KEY_DATA, jsonObjectData);

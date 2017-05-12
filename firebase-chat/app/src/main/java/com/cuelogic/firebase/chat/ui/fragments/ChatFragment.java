@@ -1,6 +1,7 @@
 package com.cuelogic.firebase.chat.ui.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.ChatContract;
 import com.cuelogic.firebase.chat.core.chat.ChatPresenter;
+import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.Chat;
 import com.cuelogic.firebase.chat.models.User;
@@ -80,6 +82,9 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
 
     private void init() {
         user = getArguments().getParcelable(Constants.ARG_USER);
+
+        ChatRoomsDBM.getInstance(mContext).clearCount(user.uid);
+        getActivity().sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
 
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle(getString(R.string.loading));

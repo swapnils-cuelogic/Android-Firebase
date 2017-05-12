@@ -13,6 +13,7 @@ import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.ChatInteractor;
 import com.cuelogic.firebase.chat.core.chat.GroupChatInteractor;
+import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.User;
@@ -46,40 +47,47 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
-        if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+        try {
+            if (remoteMessage.getData().size() > 0) {
+                Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
-            int type = Integer.parseInt(remoteMessage.getData().get("type"));
-            String title = remoteMessage.getData().get("title");
-            String message = remoteMessage.getData().get("text");
-            String uid = remoteMessage.getData().get("uid");
-            String username = remoteMessage.getData().get("username");
-            String fcmToken = remoteMessage.getData().get("fcm_token");
+                int type = Integer.parseInt(remoteMessage.getData().get("type"));
+                String title = remoteMessage.getData().get("title");
+                String message = remoteMessage.getData().get("text");
+                String uid = remoteMessage.getData().get("uid");
+                long timestamp = Long.parseLong(remoteMessage.getData().get("timestamp"));
+                String username = remoteMessage.getData().get("username");
+                String fcmToken = remoteMessage.getData().get("fcm_token");
 
+                ChatRoomsDBM.getInstance(this).addCount(uid, timestamp);
+                sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
 
-            if(type == 2) {
-                //To get sync chat with real time database on push notification received
-                if(FirebaseAuth.getInstance().getCurrentUser() != null)
-                    new GroupChatInteractor().syncMessageFromFirebaseUser(uid);
+                if(type == 2) {
+                    //To get sync chat with real time database on push notification received
+                    if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                        new GroupChatInteractor().syncMessageFromFirebaseUser(uid);
 
-                // Don't show notification if chat activity is open.
-                if (!FirebaseChatMainApp.isChattingWithSameUser(uid)) {
-                    sendGroupNotification(message, uid);
+                    // Don't show notification if chat activity is open.
+                    if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid)) {
+                        sendGroupNotification(message, uid);
+                    } else {
+                        EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                    }
                 } else {
-                    EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
-                }
-            } else {
-                //To get sync chat with real time database on push notification received
-                if(FirebaseAuth.getInstance().getCurrentUser() != null)
-                    new ChatInteractor().syncMessageFromFirebaseUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), uid);
+                    //To get sync chat with real time database on push notification received
+                    if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                        new ChatInteractor().syncMessageFromFirebaseUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), uid);
 
-                // Don't show notification if chat activity is open.
-                if (!FirebaseChatMainApp.isChattingWithSameUser(uid)) {
-                    sendNotification(title, message, username, uid, fcmToken);
-                } else {
-                    EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                    // Don't show notification if chat activity is open.
+                    if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid)) {
+                        sendNotification(title, message, username, uid, fcmToken);
+                    } else {
+                        EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                    }
                 }
             }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
     }
 

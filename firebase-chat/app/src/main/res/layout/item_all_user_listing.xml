@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
     android:paddingBottom="@dimen/padding_small"
     android:paddingEnd="@dimen/padding_avg"
     android:paddingStart="@dimen/padding_avg"
@@ -17,22 +15,75 @@
         android:id="@+id/profile_image"
         android:layout_width="@dimen/user_icon_width"
         android:layout_height="@dimen/user_icon_height"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
         android:background="@drawable/circle_other"
         android:src="@drawable/circle_other"
         app:civ_border_color="@color/border"
         app:civ_border_width="1dp" />
 
     <android.support.v4.widget.Space
+        android:id="@+id/space"
         android:layout_width="@dimen/space_avg"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/profile_image" />
 
     <TextView
         android:id="@+id/text_view_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/text_view_last_message_time"
+        android:layout_toRightOf="@+id/space"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/grey_700"
         tools:text="abcd@xyz.com" />
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/text_view_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_username"
+        android:layout_toLeftOf="@+id/image_is_muted"
+        android:layout_toRightOf="@+id/space"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/grey_600"
+        tools:text="3 Members" />
+
+    <TextView
+        android:id="@+id/text_view_last_message_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/margin_min"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/colorPrimary"
+        android:textSize="12dp"
+        tools:text="2:30 PM" />
+
+    <ImageView
+        android:id="@+id/image_is_muted"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_username"
+        android:layout_toLeftOf="@+id/text_view_unread_count"
+        android:src="@drawable/ic_notifications_off_grey_16dp" />
+
+    <TextView
+        android:id="@+id/text_view_unread_count"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/text_view_username"
+        android:background="@drawable/unread_count_bg"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="10dp"
+        tools:text="2" />
+</RelativeLayout>

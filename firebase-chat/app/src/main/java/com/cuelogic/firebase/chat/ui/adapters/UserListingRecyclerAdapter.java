@@ -7,9 +7,12 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
+import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
+import com.cuelogic.firebase.chat.models.RoomDetails;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.utils.StringUtils;
 import com.squareup.picasso.Picasso;
@@ -46,6 +49,7 @@ public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListing
         try {
             //String alphabet = user.email.substring(0, 1);
             holder.txtUsername.setText(user.displayName != null ? user.displayName : user.email);
+            holder.txtEmail.setText(user.email);
             if(StringUtils.isNotEmptyNotNull(user.photoUrl)) {
                 Picasso.with(mContext).load(user.photoUrl).into(holder.profileImage);
             } else {
@@ -54,6 +58,22 @@ public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListing
             /** Change background color of the selected items in list view  **/
             holder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? 0x9934B5E4 : Color.TRANSPARENT);
 
+            RoomDetails roomDetails = ChatRoomsDBM.getInstance(mContext).getRoomDetails(user.uid);
+
+            holder.txtLastMessageTime.setText(roomDetails.lastMessageTime);
+
+            if(roomDetails.isMuted) {
+                holder.imgIsMuted.setVisibility(View.VISIBLE);
+            } else {
+                holder.imgIsMuted.setVisibility(View.INVISIBLE);
+            }
+
+            if(roomDetails.unreadCount > 0) {
+                holder.txtUnreadCount.setText(""+roomDetails.unreadCount);
+                holder.txtUnreadCount.setVisibility(View.VISIBLE);
+            } else {
+                holder.txtUnreadCount.setVisibility(View.INVISIBLE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -76,13 +96,18 @@ public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListing
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txtUsername;
+        private TextView txtUsername, txtEmail, txtLastMessageTime, txtUnreadCount;
         private CircleImageView profileImage;
+        private ImageView imgIsMuted;
 
         ViewHolder(View itemView) {
             super(itemView);
             profileImage = (CircleImageView) itemView.findViewById(R.id.profile_image);
             txtUsername = (TextView) itemView.findViewById(R.id.text_view_username);
+            txtEmail = (TextView) itemView.findViewById(R.id.text_view_email);
+            imgIsMuted = (ImageView) itemView.findViewById(R.id.image_is_muted);
+            txtLastMessageTime = (TextView) itemView.findViewById(R.id.text_view_last_message_time);
+            txtUnreadCount = (TextView) itemView.findViewById(R.id.text_view_unread_count);
         }
     }
 

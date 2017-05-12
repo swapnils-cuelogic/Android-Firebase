@@ -7,10 +7,13 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
+import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.models.Group;
+import com.cuelogic.firebase.chat.models.RoomDetails;
 
 import java.util.List;
 
@@ -49,6 +52,22 @@ public class GroupListingRecyclerAdapter extends RecyclerView.Adapter<GroupListi
             /** Change background color of the selected items in list view  **/
             holder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? 0x9934B5E4 : Color.TRANSPARENT);
 
+            RoomDetails roomDetails = ChatRoomsDBM.getInstance(mContext).getRoomDetails(group.roomId);
+
+            holder.txtLastMessageTime.setText(roomDetails.lastMessageTime);
+
+            if(roomDetails.isMuted) {
+                holder.imgIsMuted.setVisibility(View.VISIBLE);
+            } else {
+                holder.imgIsMuted.setVisibility(View.INVISIBLE);
+            }
+
+            if(roomDetails.unreadCount > 0) {
+                holder.txtUnreadCount.setText(""+roomDetails.unreadCount);
+                holder.txtUnreadCount.setVisibility(View.VISIBLE);
+            } else {
+                holder.txtUnreadCount.setVisibility(View.INVISIBLE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,15 +90,18 @@ public class GroupListingRecyclerAdapter extends RecyclerView.Adapter<GroupListi
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView txtGroupName;
-        private TextView txtMembers;
+        private TextView txtGroupName, txtMembers, txtLastMessageTime, txtUnreadCount;
         private CircleImageView groupImage;
+        private ImageView imgIsMuted;
 
         ViewHolder(View itemView) {
             super(itemView);
             groupImage = (CircleImageView) itemView.findViewById(R.id.group_image);
             txtGroupName = (TextView) itemView.findViewById(R.id.text_view_group_name);
             txtMembers = (TextView) itemView.findViewById(R.id.text_view_members);
+            imgIsMuted = (ImageView) itemView.findViewById(R.id.image_is_muted);
+            txtLastMessageTime = (TextView) itemView.findViewById(R.id.text_view_last_message_time);
+            txtUnreadCount = (TextView) itemView.findViewById(R.id.text_view_unread_count);
         }
     }
 

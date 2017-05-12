@@ -1,6 +1,7 @@
 package com.cuelogic.firebase.chat.ui.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.GroupChatContract;
 import com.cuelogic.firebase.chat.core.chat.GroupChatPresenter;
+import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.NewChat;
@@ -34,13 +36,11 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class NewChatFragment extends BaseFragment implements GroupChatContract.View, TextView.OnEditorActionListener {
     private Group group;
     private Map<String, User> mapUidUser = new HashMap<>();
-    private List<String> pushTokens = new ArrayList<>();
 
     private RecyclerView mRecyclerViewChat;
     private EditText mETxtMessage;
@@ -92,6 +92,10 @@ public class NewChatFragment extends BaseFragment implements GroupChatContract.V
 
     private void init() {
         group = getArguments().getParcelable(Constants.ARG_GROUP);
+
+        ChatRoomsDBM.getInstance(mContext).clearCount(group.roomId);
+        getActivity().sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
+
         setUpUsersMapAndPushTokens();
 
         mProgressDialog = new ProgressDialog(getActivity());
@@ -120,9 +124,6 @@ public class NewChatFragment extends BaseFragment implements GroupChatContract.V
                             User user = dataSnapshot.getValue(User.class);
                             if(user != null) {
                                 mapUidUser.put(user.uid, user);
-                                if(!FirebaseAuth.getInstance().getCurrentUser().getUid().equals(user.uid)) {
-                                    pushTokens.add(user.firebaseToken);
-                                }
                             }
                         }
 
@@ -153,7 +154,7 @@ public class NewChatFragment extends BaseFragment implements GroupChatContract.V
             String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();*/
             String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             NewChat newChat = new NewChat(group.roomId, senderUid, message, System.currentTimeMillis());
-            mChatPresenter.sendMessage(getActivity().getApplicationContext(), newChat, pushTokens);
+            mChatPresenter.sendMessage(getActivity().getApplicationContext(), newChat);
         }
     }
 

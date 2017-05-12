@@ -6,12 +6,6 @@
 
     <!--  Toolbar ActionMode Menu Items  -->
     <item
-        android:id="@+id/action_create_group"
-        android:icon="@drawable/ic_action_create_group_white_24dp"
-        android:orderInCategory="100"
-        android:title="@string/create_group"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/action_mute_notifications"
         android:icon="@drawable/ic_action_mute_white_24dp"
         android:orderInCategory="100"

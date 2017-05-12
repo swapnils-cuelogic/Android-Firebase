@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.cuelogic.firebase.chat.models.NewChat;
 
-import java.util.List;
-
 public interface GroupChatContract {
     interface View {
         void onSendMessageSuccess();
@@ -18,7 +16,7 @@ public interface GroupChatContract {
     }
 
     interface Presenter {
-        void sendMessage(Context context, NewChat newChat, List<String> receiverFirebaseTokens);
+        void sendMessage(Context context, NewChat newChat);
 
         void getMessage(String roomId);
 
@@ -26,7 +24,7 @@ public interface GroupChatContract {
     }
 
     interface Interactor {
-        void sendMessageToFirebaseUser(Context context, NewChat newChat, List<String> receiverFirebaseTokens);
+        void sendMessageToFirebaseUser(Context context, NewChat newChat);
 
         void getMessageFromFirebaseUser(String roomId);
 

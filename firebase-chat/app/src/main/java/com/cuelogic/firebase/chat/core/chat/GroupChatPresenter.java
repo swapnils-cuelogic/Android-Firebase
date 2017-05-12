@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.cuelogic.firebase.chat.models.NewChat;
 
-import java.util.List;
-
 public class GroupChatPresenter implements GroupChatContract.Presenter, GroupChatContract.OnSendMessageListener,
         GroupChatContract.OnGetMessagesListener {
     private GroupChatContract.View mView;
@@ -17,8 +15,8 @@ public class GroupChatPresenter implements GroupChatContract.Presenter, GroupCha
     }
 
     @Override
-    public void sendMessage(Context context, NewChat newChat, List<String> receiverFirebaseTokens) {
-        mChatInteractor.sendMessageToFirebaseUser(context, newChat, receiverFirebaseTokens);
+    public void sendMessage(Context context, NewChat newChat) {
+        mChatInteractor.sendMessageToFirebaseUser(context, newChat);
     }
 
     @Override

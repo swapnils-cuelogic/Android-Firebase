@@ -1,5 +1,9 @@
 package com.cuelogic.firebase.chat.ui.fragments;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,14 +18,17 @@ import android.view.ViewGroup;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersContract;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersPresenter;
-import com.cuelogic.firebase.chat.listeners.Toolbar_ActionMode_Callback;
+import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
+import com.cuelogic.firebase.chat.listeners.UsersToolbarActionModeCallback;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.activities.ChatActivity;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingRecyclerAdapter;
 import com.cuelogic.firebase.chat.ui.dialogs.CreateGroupDialog;
+import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.ItemClickSupport;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsersFragment extends BaseFragment implements GetUsersContract.View, ItemClickSupport.OnItemClickListener, ItemClickSupport.OnItemLongClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -39,12 +46,41 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
 
     private List<User> selectedUsers;
 
+    public UserListingRecyclerAdapter getUserListingRecyclerAdapter() {
+        return mUserListingRecyclerAdapter;
+    }
+
+    public ActionMode getActionMode() {
+        return mActionMode;
+    }
+
     public static UsersFragment newInstance(String type) {
         Bundle args = new Bundle();
         args.putString(ARG_TYPE, type);
         UsersFragment fragment = new UsersFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private BroadcastReceiver messageReceivedReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (mUserListingRecyclerAdapter != null) {
+                mUserListingRecyclerAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getActivity().registerReceiver(messageReceivedReceiver, new IntentFilter(Constants.ACTION_MESSAGE_RECEIVED));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(messageReceivedReceiver);
     }
 
     @Nullable
@@ -164,7 +200,7 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
 
         if (hasCheckedItems && mActionMode == null)
             // there are some selected items, start the actionMode
-            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new Toolbar_ActionMode_Callback(getActivity(), mUserListingRecyclerAdapter, mUserListingRecyclerAdapter.getUsers()));
+            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new UsersToolbarActionModeCallback(getActivity(), mUserListingRecyclerAdapter, mUserListingRecyclerAdapter.getUsers()));
         else if (!hasCheckedItems && mActionMode != null)
             // there no selected items, finish the actionMode
             mActionMode.finish();
@@ -186,9 +222,32 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
             mSwipeRefreshLayout.setEnabled(true);
         }
     }
+
     //Set action mode null after use
     public void createGroupOfUsers(List<User> selectedUsers) {
         this.selectedUsers = selectedUsers;
         mGetUsersPresenter.getUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
+    }
+    public void muteNotifications(List<User> selectedUsers) {
+        List<String> roomIds = new ArrayList<>();
+        for (User user:
+                selectedUsers) {
+            roomIds.add(user.uid);
+        }
+        ChatRoomsDBM.getInstance(mContext).muteRoom(roomIds);
+        if (mUserListingRecyclerAdapter != null) {
+            mUserListingRecyclerAdapter.notifyDataSetChanged();
+        }
+    }
+    public void unmuteNotifications(List<User> selectedUsers) {
+        List<String> roomIds = new ArrayList<>();
+        for (User user:
+                selectedUsers) {
+            roomIds.add(user.uid);
+        }
+        ChatRoomsDBM.getInstance(mContext).unmuteRoom(roomIds);
+        if (mUserListingRecyclerAdapter != null) {
+            mUserListingRecyclerAdapter.notifyDataSetChanged();
+        }
     }
 }
