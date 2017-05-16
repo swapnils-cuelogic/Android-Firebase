@@ -140,7 +140,7 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
         return super.onOptionsItemSelected(item);
     }
 
-    private void logout() {
+    public void logout() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.logout)
                 .setMessage(R.string.are_you_sure)

@@ -182,7 +182,7 @@ public class GoogleSignInActivity extends BaseActivity {
                         // signed in user can be handled in the listener.
                         if (task.isSuccessful()) {
                             updateFirebaseToken(task.getResult().getUser().getUid(),
-                                    new SharedPrefUtil(FirebaseChatMainApp.getAppContext()).getString(Constants.ARG_FIREBASE_TOKEN, null));
+                                    SharedPrefUtil.getFirebaseToken(FirebaseChatMainApp.getAppContext()));
 
                             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -193,7 +193,7 @@ public class GoogleSignInActivity extends BaseActivity {
 
                             User user = new User(firebaseUser.getUid(),
                                     firebaseUser.getEmail(),
-                                    new SharedPrefUtil(FirebaseChatMainApp.getAppContext()).getString(Constants.ARG_FIREBASE_TOKEN),
+                                    SharedPrefUtil.getFirebaseToken(FirebaseChatMainApp.getAppContext()),
                                     firebaseUser.getDisplayName(),
                                     firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : "");
 

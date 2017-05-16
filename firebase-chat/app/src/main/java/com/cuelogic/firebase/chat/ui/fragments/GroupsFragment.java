@@ -232,6 +232,7 @@ public class GroupsFragment extends BaseFragment implements GetUsersContract.Vie
             if(groupIds != null) {
                 for (String groupId:
                      groupIds) {
+                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(groupId).getRef().keepSynced(true);
                     FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(groupId).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {

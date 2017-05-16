@@ -21,6 +21,7 @@ import com.cuelogic.firebase.chat.ui.activities.ChatActivity;
 import com.cuelogic.firebase.chat.ui.activities.NewChatActivity;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -62,27 +63,29 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 ChatRoomsDBM.getInstance(this).addCount(uid, timestamp);
                 sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
 
+                FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
                 if(type == 2) {
                     //To get sync chat with real time database on push notification received
-                    if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                    if(firebaseUser != null && !uid.equals(firebaseUser.getUid())) {
                         new GroupChatInteractor().syncMessageFromFirebaseUser(uid);
-
-                    // Don't show notification if chat activity is open.
-                    if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid)) {
-                        sendGroupNotification(message, uid);
-                    } else {
-                        EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                        // Don't show notification if chat activity is open.
+                        if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid)) {
+                            sendGroupNotification(message, uid);
+                        } else {
+                            EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                        }
                     }
                 } else {
                     //To get sync chat with real time database on push notification received
-                    if(FirebaseAuth.getInstance().getCurrentUser() != null)
+                    if(firebaseUser != null && !uid.equals(firebaseUser.getUid())) {
                         new ChatInteractor().syncMessageFromFirebaseUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), uid);
-
-                    // Don't show notification if chat activity is open.
-                    if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid)) {
-                        sendNotification(title, message, username, uid, fcmToken);
-                    } else {
-                        EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                        // Don't show notification if chat activity is open.
+                        if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid)) {
+                            sendNotification(title, message, username, uid, fcmToken);
+                        } else {
+                            EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                        }
                     }
                 }
             }

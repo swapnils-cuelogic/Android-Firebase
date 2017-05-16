@@ -62,7 +62,7 @@ public class ChatInteractor implements ChatContract.Interactor {
 
                 // send push notification to the receiver
                 sendPushNotificationToReceiver(chat.displayName, chat.sender, chat.message, chat.senderUid, chat.timestamp,
-                        new SharedPrefUtil(context).getString(Constants.ARG_FIREBASE_TOKEN), receiverFirebaseToken);
+                        SharedPrefUtil.getFirebaseToken(context), receiverFirebaseToken);
                 mOnSendMessageListener.onSendMessageSuccess();
             }
 

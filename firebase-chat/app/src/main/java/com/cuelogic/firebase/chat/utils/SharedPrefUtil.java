@@ -4,138 +4,34 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SharedPrefUtil {
-    /**
-     * Name of the preference file
-     */
-    private static final String APP_PREFS = "application_preferences";
+    private static final String PREF_NAME = "CueConnectPrefs";
+    private static final int MODE = Context.MODE_PRIVATE;
 
-    private Context mContext;
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor mEditor;
+    private static final String IS_NOTIFICATIONS_ENABLED = "IS_NOTIFICATIONS_ENABLED"; //boolean
+    private static final String FIREBASE_TOKEN = "FIREBASE_TOKEN"; //String
 
-    public SharedPrefUtil(Context mContext) {
-        this.mContext = mContext;
+    private static SharedPreferences getPreferences(Context context) {
+        return context.getSharedPreferences(PREF_NAME, MODE);
+    }
+    private static SharedPreferences.Editor getEditor(Context context) {
+        return getPreferences(context).edit();
     }
 
-    /**
-     * Save a string into shared preference
-     *
-     * @param key   The name of the preference to modify
-     * @param value The new value for the preference
-     */
-    public void saveString(String key, String value) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        mEditor = mSharedPreferences.edit();
-        mEditor.putString(key, value);
-        mEditor.commit();
+    public static void clearAllPrefs(Context context) {
+        getEditor(context).clear().commit();
     }
 
-    /**
-     * Save a int into shared preference
-     *
-     * @param key   The name of the preference to modify
-     * @param value The new value for the preference
-     */
-    public void saveInt(String key, int value) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        mEditor = mSharedPreferences.edit();
-        mEditor.putInt(key, value);
-        mEditor.commit();
+    public static boolean isNotificationsEnabled(Context context) {
+        return getPreferences(context).getBoolean(IS_NOTIFICATIONS_ENABLED, true);
+    }
+    public static void setNotificationsEnabled(Context context, boolean notificationsEnabled) {
+        getEditor(context).putBoolean(IS_NOTIFICATIONS_ENABLED, notificationsEnabled).commit();
     }
 
-    /**
-     * Save a boolean into shared preference
-     *
-     * @param key   The name of the preference to modify
-     * @param value The new value for the preference
-     */
-    public void saveBoolean(String key, boolean value) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        mEditor = mSharedPreferences.edit();
-        mEditor.putBoolean(key, value);
-        mEditor.commit();
+    public static String getFirebaseToken(Context context) {
+        return getPreferences(context).getString(FIREBASE_TOKEN, "");
     }
-
-    /**
-     * Retrieve a String value from the preferences.
-     *
-     * @param key The name of the preference to retrieve.
-     * @return Returns the preference value if it exists, or null.
-     * Throws ClassCastException if there is a preference with this name that is not a String.
-     */
-    public String getString(String key) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        return mSharedPreferences.getString(key, null);
-    }
-
-    /**
-     * Retrieve a String value from the preferences.
-     *
-     * @param key          The name of the preference to retrieve.
-     * @param defaultValue Value to return if this preference does not exist.
-     * @return Returns the preference value if it exists, or defaultValue.
-     * Throws ClassCastException if there is a preference with this name that is not a String.
-     */
-    public String getString(String key, String defaultValue) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        return mSharedPreferences.getString(key, defaultValue);
-    }
-
-    /**
-     * Retrieve a int value from the preferences.
-     *
-     * @param key The name of the preference to retrieve.
-     * @return Returns the preference value if it exists, or 0.
-     * Throws ClassCastException if there is a preference with this name that is not a int.
-     */
-    public int getInt(String key) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        return mSharedPreferences.getInt(key, 0);
-    }
-
-    /**
-     * Retrieve a int value from the preferences.
-     *
-     * @param key          The name of the preference to retrieve.
-     * @param defaultValue Value to return if this preference does not exist.
-     * @return Returns the preference value if it exists, or defaultValue.
-     * Throws ClassCastException if there is a preference with this name that is not a int.
-     */
-    public int getInt(String key, int defaultValue) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        return mSharedPreferences.getInt(key, defaultValue);
-    }
-
-    /**
-     * Retrieve a boolean value from the preferences.
-     *
-     * @param key The name of the preference to retrieve.
-     * @return Returns the preference value if it exists, or false.
-     * Throws ClassCastException if there is a preference with this name that is not a boolean.
-     */
-    public boolean getBoolean(String key) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        return mSharedPreferences.getBoolean(key, false);
-    }
-
-    /**
-     * Retrieve a boolean value from the preferences.
-     *
-     * @param key          The name of the preference to retrieve.
-     * @param defaultValue Value to return if this preference does not exist.
-     * @return Returns the preference value if it exists, or defaultValue.
-     * Throws ClassCastException if there is a preference with this name that is not a boolean.
-     */
-    public boolean getBoolean(String key, boolean defaultValue) {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        return mSharedPreferences.getBoolean(key, defaultValue);
-    }
-
-    /**
-     * Clears the shared preference file
-     */
-    public void clear() {
-        mSharedPreferences = mContext.getSharedPreferences(APP_PREFS, Context.MODE_PRIVATE);
-        mSharedPreferences.edit().clear().apply();
+    public static void setFirebaseToken(Context context, String firebaseToken) {
+        getEditor(context).putString(FIREBASE_TOKEN, firebaseToken).commit();
     }
 }

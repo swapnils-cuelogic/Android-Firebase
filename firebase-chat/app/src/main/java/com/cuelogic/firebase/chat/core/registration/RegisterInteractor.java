@@ -68,7 +68,7 @@ public class RegisterInteractor implements RegisterContract.Interactor {
 
                                                                 User user = new User(firebaseUser.getUid(),
                                                                         firebaseUser.getEmail(),
-                                                                        new SharedPrefUtil(FirebaseChatMainApp.getAppContext()).getString(Constants.ARG_FIREBASE_TOKEN),
+                                                                        SharedPrefUtil.getFirebaseToken(FirebaseChatMainApp.getAppContext()),
                                                                         displayName);
 
                                                                 mOnRegistrationListener.onSuccess(user);
