@@ -20,7 +20,7 @@ import com.cuelogic.firebase.chat.core.chat.GroupChatPresenter;
 import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.Group;
-import com.cuelogic.firebase.chat.models.NewChat;
+import com.cuelogic.firebase.chat.models.GroupChat;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.adapters.GroupChatRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NewChatFragment extends BaseFragment implements GroupChatContract.View, TextView.OnEditorActionListener {
+public class GroupChatFragment extends BaseFragment implements GroupChatContract.View, TextView.OnEditorActionListener {
     private Group group;
     private Map<String, User> mapUidUser = new HashMap<>();
 
@@ -51,10 +51,10 @@ public class NewChatFragment extends BaseFragment implements GroupChatContract.V
 
     private GroupChatPresenter mChatPresenter;
 
-    public static NewChatFragment newInstance(Group group) {
+    public static GroupChatFragment newInstance(Group group) {
         Bundle args = new Bundle();
         args.putParcelable(Constants.ARG_GROUP, group);
-        NewChatFragment fragment = new NewChatFragment();
+        GroupChatFragment fragment = new GroupChatFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -153,8 +153,8 @@ public class NewChatFragment extends BaseFragment implements GroupChatContract.V
             /*String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
             String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();*/
             String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            NewChat newChat = new NewChat(group.roomId, senderUid, message, System.currentTimeMillis());
-            mChatPresenter.sendMessage(getActivity().getApplicationContext(), newChat);
+            GroupChat groupChat = new GroupChat(group.roomId, senderUid, message, System.currentTimeMillis());
+            mChatPresenter.sendMessage(getActivity().getApplicationContext(), groupChat);
         }
     }
 
@@ -170,10 +170,10 @@ public class NewChatFragment extends BaseFragment implements GroupChatContract.V
     }
 
     @Override
-    public void onGetMessagesSuccess(NewChat newChat) {
+    public void onGetMessagesSuccess(GroupChat newChat) {
         mProgressDialog.dismiss();
         if (mGroupChatRecyclerAdapter == null) {
-            mGroupChatRecyclerAdapter = new GroupChatRecyclerAdapter(new ArrayList<NewChat>(), mapUidUser);
+            mGroupChatRecyclerAdapter = new GroupChatRecyclerAdapter(new ArrayList<GroupChat>(), mapUidUser);
             mRecyclerViewChat.setAdapter(mGroupChatRecyclerAdapter);
         }
         mGroupChatRecyclerAdapter.add(newChat);

@@ -2,33 +2,25 @@ package com.cuelogic.firebase.chat.ui.activities;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.cuelogic.firebase.chat.BuildConfig;
 import com.cuelogic.firebase.chat.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 public class BaseActivity extends AppCompatActivity {
-    private static final String TAG = BaseActivity.class.getSimpleName();
+
+    /*private static final String TAG = BaseActivity.class.getSimpleName();
     private static final String IS_TO_APPLY_TOOLBAR = "is_to_apply_toolbar";
     private static final String TOOLBAR_COLOR = "toolbar_color";
     private static final String IS_TO_APPLY_BACKGROUND = "is_to_apply_background";
     private static final String BACKGROUND_COLOR = "background_color";
+    private FirebaseRemoteConfig mFirebaseRemoteConfig;*/
 
     protected Toolbar mToolbar;
-    private FirebaseRemoteConfig mFirebaseRemoteConfig;
     private ProgressDialog pDialog;
 
     @Override
@@ -37,7 +29,7 @@ public class BaseActivity extends AppCompatActivity {
 
         setToolbar();
 
-        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        /*mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
         // Create Remote Config Setting to enable developer mode.
         // Fetching configs from the server is normally limited to 5 requests per hour.
@@ -52,7 +44,7 @@ public class BaseActivity extends AppCompatActivity {
 
         mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
 
-        readFirebaseRemoteConfig();
+        readFirebaseRemoteConfig();*/
     }
 
     private void setToolbar() {
@@ -78,15 +70,15 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    private void readFirebaseRemoteConfig() {
+    /*private void readFirebaseRemoteConfig() {
         updateRemoteConfig();
 
         long cacheExpiration = 3600; // 1 hour in seconds.
         // If in developer mode cacheExpiration is set to 0 so each fetch will retrieve values from
         // the server.
-        if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
-            cacheExpiration = 10;
-        }
+//        if (mFirebaseRemoteConfig.getInfo().getConfigSettings().isDeveloperModeEnabled()) {
+//            cacheExpiration = 10;
+//        }
 
         // cacheExpirationSeconds is set to cacheExpiration here, indicating that any previously
         // fetched and cached config would be considered expired because it would have been fetched
@@ -126,7 +118,7 @@ public class BaseActivity extends AppCompatActivity {
                 ContextCompat.getColor(this, R.color.white);
 
         findViewById(android.R.id.content).setBackgroundColor(backgroundColor);
-    }
+    }*/
 
     public void showToastShort(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();

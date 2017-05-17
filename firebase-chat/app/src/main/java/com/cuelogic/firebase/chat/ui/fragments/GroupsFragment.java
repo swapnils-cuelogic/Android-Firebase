@@ -21,7 +21,7 @@ import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.listeners.GroupsToolbarActionModeCallback;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.User;
-import com.cuelogic.firebase.chat.ui.activities.NewChatActivity;
+import com.cuelogic.firebase.chat.ui.activities.GroupChatActivity;
 import com.cuelogic.firebase.chat.ui.adapters.GroupListingRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.ItemClickSupport;
@@ -30,6 +30,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -141,7 +142,7 @@ public class GroupsFragment extends BaseFragment implements GetUsersContract.Vie
         if (mActionMode != null)
             onListItemSelect(position);
         else
-            NewChatActivity.startActivity(getActivity(), mGroupListingRecyclerAdapter.getGroup(position));
+            GroupChatActivity.startActivity(getActivity(), mGroupListingRecyclerAdapter.getGroup(position));
     }
 
     @Override
@@ -240,6 +241,7 @@ public class GroupsFragment extends BaseFragment implements GetUsersContract.Vie
                             if(group != null) {
                                 groups.add(group);
                                 mGroupListingRecyclerAdapter.notifyDataSetChanged();
+                                FirebaseMessaging.getInstance().subscribeToTopic(group.roomId); //Not needed
                             }
                         }
 

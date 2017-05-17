@@ -57,6 +57,14 @@ public class ChatActivity extends BaseActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        if(isTaskRoot()) {
+            UserListingActivity.startActivity(this);
+        }
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         FirebaseChatMainApp.setChatActivityOpen(true, user.uid);

@@ -2,7 +2,7 @@ package com.cuelogic.firebase.chat.core.chat;
 
 import android.content.Context;
 
-import com.cuelogic.firebase.chat.models.NewChat;
+import com.cuelogic.firebase.chat.models.GroupChat;
 
 public interface GroupChatContract {
     interface View {
@@ -10,13 +10,13 @@ public interface GroupChatContract {
 
         void onSendMessageFailure(String message);
 
-        void onGetMessagesSuccess(NewChat newChat);
+        void onGetMessagesSuccess(GroupChat newChat);
 
         void onGetMessagesFailure(String message);
     }
 
     interface Presenter {
-        void sendMessage(Context context, NewChat newChat);
+        void sendMessage(Context context, GroupChat newChat);
 
         void getMessage(String roomId);
 
@@ -24,7 +24,7 @@ public interface GroupChatContract {
     }
 
     interface Interactor {
-        void sendMessageToFirebaseUser(Context context, NewChat newChat);
+        void sendMessageToFirebaseUser(Context context, GroupChat newChat);
 
         void getMessageFromFirebaseUser(String roomId);
 
@@ -38,7 +38,7 @@ public interface GroupChatContract {
     }
 
     interface OnGetMessagesListener {
-        void onGetMessagesSuccess(NewChat newChat);
+        void onGetMessagesSuccess(GroupChat newChat);
 
         void onGetMessagesFailure(String message);
     }

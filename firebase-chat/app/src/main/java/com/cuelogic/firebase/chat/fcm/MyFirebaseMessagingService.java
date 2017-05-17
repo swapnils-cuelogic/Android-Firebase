@@ -18,8 +18,9 @@ import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.activities.ChatActivity;
-import com.cuelogic.firebase.chat.ui.activities.NewChatActivity;
+import com.cuelogic.firebase.chat.ui.activities.GroupChatActivity;
 import com.cuelogic.firebase.chat.utils.Constants;
+import com.cuelogic.firebase.chat.utils.SharedPrefUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -56,32 +57,33 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 String title = remoteMessage.getData().get("title");
                 String message = remoteMessage.getData().get("text");
                 String uid = remoteMessage.getData().get("uid");
+                String roomId = remoteMessage.getData().get("room_id");
                 long timestamp = Long.parseLong(remoteMessage.getData().get("timestamp"));
                 String username = remoteMessage.getData().get("username");
                 String fcmToken = remoteMessage.getData().get("fcm_token");
 
-                ChatRoomsDBM.getInstance(this).addCount(uid, timestamp);
-                sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
-
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
                 if(type == 2) {
-                    //To get sync chat with real time database on push notification received
+                    ChatRoomsDBM.getInstance(this).addMessage(roomId, message, timestamp);
+                    sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
                     if(firebaseUser != null && !uid.equals(firebaseUser.getUid())) {
-                        new GroupChatInteractor().syncMessageFromFirebaseUser(uid);
+                        new GroupChatInteractor().syncMessageFromFirebaseUser(roomId);
                         // Don't show notification if chat activity is open.
-                        if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid)) {
-                            sendGroupNotification(message, uid);
+                        if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(roomId) && !ChatRoomsDBM.getInstance(this).isMuted(roomId) && SharedPrefUtil.isNotificationsEnabled(this)) {
+                            sendGroupNotification(message, roomId);
                         } else {
-                            EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
+                            EventBus.getDefault().post(new PushNotificationEvent(title, message, username, roomId, fcmToken));
                         }
                     }
                 } else {
+                    ChatRoomsDBM.getInstance(this).addMessage(uid, message, timestamp);
+                    sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
                     //To get sync chat with real time database on push notification received
                     if(firebaseUser != null && !uid.equals(firebaseUser.getUid())) {
                         new ChatInteractor().syncMessageFromFirebaseUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), uid);
                         // Don't show notification if chat activity is open.
-                        if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid)) {
+                        if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid) && SharedPrefUtil.isNotificationsEnabled(this)) {
                             sendNotification(title, message, username, uid, fcmToken);
                         } else {
                             EventBus.getDefault().post(new PushNotificationEvent(title, message, username, uid, fcmToken));
@@ -127,7 +129,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Group group = dataSnapshot.getValue(Group.class);
                 if(group != null) {
-                    Intent intent = new Intent(MyFirebaseMessagingService.this, NewChatActivity.class);
+                    Intent intent = new Intent(MyFirebaseMessagingService.this, GroupChatActivity.class);
                     intent.putExtra(Constants.ARG_GROUP, group);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     PendingIntent pendingIntent = PendingIntent.getActivity(MyFirebaseMessagingService.this, 0, intent,

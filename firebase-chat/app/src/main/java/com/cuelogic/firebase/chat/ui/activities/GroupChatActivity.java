@@ -8,17 +8,17 @@ import android.support.v4.app.FragmentTransaction;
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.models.Group;
-import com.cuelogic.firebase.chat.ui.fragments.NewChatFragment;
+import com.cuelogic.firebase.chat.ui.fragments.GroupChatFragment;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class NewChatActivity extends BaseActivity {
+public class GroupChatActivity extends BaseActivity {
     private Group group;
 
-    private static final String TAG = NewChatActivity.class.getSimpleName();
+    private static final String TAG = GroupChatActivity.class.getSimpleName();
 
     public static void startActivity(Context context, Group group) {
-        Intent intent = new Intent(context, NewChatActivity.class);
+        Intent intent = new Intent(context, GroupChatActivity.class);
         intent.putExtra(Constants.ARG_GROUP, group);
         context.startActivity(intent);
     }
@@ -41,7 +41,7 @@ public class NewChatActivity extends BaseActivity {
                 enableBackButton();
                 // set the register screen fragment
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame_layout_content_chat, NewChatFragment.newInstance(group), NewChatFragment.class.getSimpleName());
+                fragmentTransaction.replace(R.id.frame_layout_content_chat, GroupChatFragment.newInstance(group), GroupChatFragment.class.getSimpleName());
                 fragmentTransaction.commit();
             } else {
                 onBackPressed();
@@ -49,9 +49,17 @@ public class NewChatActivity extends BaseActivity {
             }
         } else {
             showToastShort(getString(R.string.invalid_user_session));
-            GoogleSignInActivity.startIntent(NewChatActivity.this,
+            GoogleSignInActivity.startIntent(GroupChatActivity.this,
                     Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isTaskRoot()) {
+            UserListingActivity.startActivity(this);
+        }
+        super.onBackPressed();
     }
 
     @Override

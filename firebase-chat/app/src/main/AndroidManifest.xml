@@ -41,7 +41,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.cuelogic.firebase.chat.ui.activities.NewChatActivity"
+            android:name="com.cuelogic.firebase.chat.ui.activities.GroupChatActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
 

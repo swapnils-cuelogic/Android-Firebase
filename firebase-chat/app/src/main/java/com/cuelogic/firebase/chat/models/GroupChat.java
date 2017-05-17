@@ -6,16 +6,16 @@ import android.os.Parcelable;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
-public class NewChat implements Parcelable {
+public class GroupChat implements Parcelable {
     public String roomId;
     public String senderUid;
     public String message;
     public long timestamp;
 
-    public NewChat() {
+    public GroupChat() {
     }
 
-    public NewChat(String roomId, String senderUid, String message, long timestamp) {
+    public GroupChat(String roomId, String senderUid, String message, long timestamp) {
         this.roomId = roomId;
         this.senderUid = senderUid;
         this.message = message;
@@ -35,20 +35,20 @@ public class NewChat implements Parcelable {
         dest.writeLong(this.timestamp);
     }
 
-    protected NewChat(Parcel in) {
+    protected GroupChat(Parcel in) {
         this.roomId = in.readString();
         this.senderUid = in.readString();
         this.message = in.readString();
         this.timestamp = in.readLong();
     }
 
-    public static final Creator<NewChat> CREATOR = new Creator<NewChat>() {
-        public NewChat createFromParcel(Parcel source) {
-            return new NewChat(source);
+    public static final Creator<GroupChat> CREATOR = new Creator<GroupChat>() {
+        public GroupChat createFromParcel(Parcel source) {
+            return new GroupChat(source);
         }
 
-        public NewChat[] newArray(int size) {
-            return new NewChat[size];
+        public GroupChat[] newArray(int size) {
+            return new GroupChat[size];
         }
     };
 }

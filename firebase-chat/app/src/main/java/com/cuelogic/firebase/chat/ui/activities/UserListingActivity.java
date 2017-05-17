@@ -16,6 +16,7 @@ import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.logout.LogoutContract;
 import com.cuelogic.firebase.chat.core.logout.LogoutPresenter;
+import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.fcm.FcmTopicBuilder;
 import com.cuelogic.firebase.chat.listeners.GroupActionListener;
 import com.cuelogic.firebase.chat.models.Group;
@@ -148,6 +149,7 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        ChatRoomsDBM.getInstance(UserListingActivity.this).clear();
                         mLogoutPresenter.logout();
                     }
                 })

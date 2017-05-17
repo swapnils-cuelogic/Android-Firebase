@@ -37,12 +37,14 @@ public class ChatRoomsDBM extends DatabaseManager {
 
         public static final String ROOM_ID = "roomId";
         public static final String UNREAD_COUNT = "unread_count";
+        public static final String LAST_MESSAGE = "last_message";
         public static final String LAST_MESSAGE_TIMESTAMP = "last_message_timestamp";
         public static final String IS_MUTED = "is_muted";
 
         public static final String CREATE_TABLE = "create table " + TABLE
                 + " (" + ROOM_ID + " TEXT PRIMARY KEY NOT NULL, "
                 + UNREAD_COUNT + " INTEGER DEFAULT 0, "
+                + LAST_MESSAGE + " TEXT, "
                 + LAST_MESSAGE_TIMESTAMP + " INTEGER DEFAULT 0, "
                 + IS_MUTED + " INTEGER DEFAULT 0);";
     }
@@ -130,12 +132,13 @@ public class ChatRoomsDBM extends DatabaseManager {
         }
     }
 
-    public void addCount(String roomId, long timestamp) {
+    public void addMessage(String roomId, String message, long timestamp) {
         try {
             SQLiteDatabase db = getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put(_ChatRooms.ROOM_ID, roomId);
+            values.put(_ChatRooms.LAST_MESSAGE, message);
             values.put(_ChatRooms.LAST_MESSAGE_TIMESTAMP, timestamp);
 
             Cursor cur = db.query(_ChatRooms.TABLE, null,
@@ -173,6 +176,7 @@ public class ChatRoomsDBM extends DatabaseManager {
                 roomDetails.unreadCount = cur.getInt(cur.getColumnIndex(_ChatRooms.UNREAD_COUNT));
                 long time = cur.getLong(cur.getColumnIndex(_ChatRooms.LAST_MESSAGE_TIMESTAMP));
                 if(time != 0) {
+                    roomDetails.lastMessage = cur.getString(cur.getColumnIndex(_ChatRooms.LAST_MESSAGE));
                     roomDetails.lastMessageTime = sdfTime.format(new Date(time));
                 }
                 roomDetails.isMuted = cur.getInt(cur.getColumnIndex(_ChatRooms.IS_MUTED)) == 1;
@@ -184,6 +188,18 @@ public class ChatRoomsDBM extends DatabaseManager {
             e.printStackTrace();
         }
         return roomDetails;
+    }
+
+    public void clear() {
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            db.delete(_ChatRooms.TABLE, null, null);
+            db.close();
+        } catch(SQLException se){
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*public List<Service> getAll(long parentServiceId) {
@@ -297,17 +313,5 @@ public class ChatRoomsDBM extends DatabaseManager {
         values.put(_ChatRooms.LAST_UPDATED, service.getLastUpdated());
         values.put(_ChatRooms.IS_MUTED, service.isDeleted() ? 1 : 0);
         return values;
-    }
-
-    public void clear() {
-        try {
-            SQLiteDatabase db = getWritableDatabase();
-            db.delete(_ChatRooms.TABLE, null, null);
-            db.close();
-        } catch(SQLException se){
-            se.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }*/
 }

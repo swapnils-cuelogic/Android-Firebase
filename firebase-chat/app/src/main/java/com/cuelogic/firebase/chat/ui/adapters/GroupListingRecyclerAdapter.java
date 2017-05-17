@@ -14,6 +14,7 @@ import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.RoomDetails;
+import com.cuelogic.firebase.chat.utils.StringUtils;
 
 import java.util.List;
 
@@ -47,13 +48,13 @@ public class GroupListingRecyclerAdapter extends RecyclerView.Adapter<GroupListi
         try {
             //String alphabet = user.email.substring(0, 1);
             holder.txtGroupName.setText(group.displayName);
-            holder.txtMembers.setText(group.users.size()+" Members");
             holder.groupImage.setImageResource(R.drawable.ic_group_white_24dp);
             /** Change background color of the selected items in list view  **/
             holder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? 0x9934B5E4 : Color.TRANSPARENT);
 
             RoomDetails roomDetails = ChatRoomsDBM.getInstance(mContext).getRoomDetails(group.roomId);
 
+            holder.txtMembers.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : group.users.size()+" Members");
             holder.txtLastMessageTime.setText(roomDetails.lastMessageTime);
 
             if(roomDetails.isMuted) {

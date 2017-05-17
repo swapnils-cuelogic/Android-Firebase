@@ -34,6 +34,7 @@ public class FcmNotificationBuilder {
     private static final String KEY_DATA = "data";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_UID = "uid";
+    private static final String KEY_ROOM_ID = "room_id";
     private static final String KEY_TIMESTAMP = "timestamp";
     private static final String KEY_FCM_TOKEN = "fcm_token";
 
@@ -42,6 +43,7 @@ public class FcmNotificationBuilder {
     private String mMessage;
     private String mUsername;
     private String mUid;
+    private String mRoomId;
     private long mTimestamp;
     private String mFirebaseToken;
     private String mReceiverFirebaseToken;
@@ -76,6 +78,11 @@ public class FcmNotificationBuilder {
 
     public FcmNotificationBuilder uid(String uid) {
         mUid = uid;
+        return this;
+    }
+
+    public FcmNotificationBuilder roomId(String roomId) {
+        mRoomId = roomId;
         return this;
     }
 
@@ -125,7 +132,7 @@ public class FcmNotificationBuilder {
     private JSONObject getValidJsonBody() throws JSONException {
         JSONObject jsonObjectBody = new JSONObject();
         if(mType == 2) {
-            jsonObjectBody.put(KEY_TO, "/topics/"+mUid);
+            jsonObjectBody.put(KEY_TO, "/topics/"+mRoomId);
         } else {
             jsonObjectBody.put(KEY_TO, mReceiverFirebaseToken);
         }
@@ -135,6 +142,7 @@ public class FcmNotificationBuilder {
         jsonObjectData.put(KEY_TEXT, mMessage);
         jsonObjectData.put(KEY_USERNAME, mUsername);
         jsonObjectData.put(KEY_UID, mUid);
+        jsonObjectData.put(KEY_ROOM_ID, mRoomId);
         jsonObjectData.put(KEY_TIMESTAMP, mTimestamp);
         jsonObjectData.put(KEY_FCM_TOKEN, mFirebaseToken);
 

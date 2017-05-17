@@ -2,7 +2,7 @@ package com.cuelogic.firebase.chat.core.chat;
 
 import android.content.Context;
 
-import com.cuelogic.firebase.chat.models.NewChat;
+import com.cuelogic.firebase.chat.models.GroupChat;
 
 public class GroupChatPresenter implements GroupChatContract.Presenter, GroupChatContract.OnSendMessageListener,
         GroupChatContract.OnGetMessagesListener {
@@ -15,7 +15,7 @@ public class GroupChatPresenter implements GroupChatContract.Presenter, GroupCha
     }
 
     @Override
-    public void sendMessage(Context context, NewChat newChat) {
+    public void sendMessage(Context context, GroupChat newChat) {
         mChatInteractor.sendMessageToFirebaseUser(context, newChat);
     }
 
@@ -40,7 +40,7 @@ public class GroupChatPresenter implements GroupChatContract.Presenter, GroupCha
     }
 
     @Override
-    public void onGetMessagesSuccess(NewChat newChat) {
+    public void onGetMessagesSuccess(GroupChat newChat) {
         mView.onGetMessagesSuccess(newChat);
     }
 

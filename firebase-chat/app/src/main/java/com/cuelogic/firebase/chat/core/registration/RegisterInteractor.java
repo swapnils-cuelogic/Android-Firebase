@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.models.User;
-import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.SharedPrefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;

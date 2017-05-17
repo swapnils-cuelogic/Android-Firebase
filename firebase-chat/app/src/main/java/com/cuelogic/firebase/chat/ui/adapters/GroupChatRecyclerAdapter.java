@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
-import com.cuelogic.firebase.chat.models.NewChat;
+import com.cuelogic.firebase.chat.models.GroupChat;
 import com.cuelogic.firebase.chat.models.User;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -20,14 +20,14 @@ public class GroupChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;
     private Map<String, User> mapUidUser = new HashMap<>();
-    private List<NewChat> mChats;
+    private List<GroupChat> mChats;
 
-    public GroupChatRecyclerAdapter(List<NewChat> chats, Map<String, User> mapUidUser) {
+    public GroupChatRecyclerAdapter(List<GroupChat> chats, Map<String, User> mapUidUser) {
         this.mChats = chats;
         this.mapUidUser = mapUidUser;
     }
 
-    public void add(NewChat chat) {
+    public void add(GroupChat chat) {
         mChats.add(chat);
         notifyItemInserted(mChats.size() - 1);
     }
@@ -60,7 +60,7 @@ public class GroupChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     private void configureMyChatViewHolder(MyChatViewHolder myChatViewHolder, int position) {
-        NewChat chat = mChats.get(position);
+        GroupChat chat = mChats.get(position);
         User user = mapUidUser.get(chat.senderUid);
         if(user != null) {
             String alphabet = user.displayName.substring(0, 1);
@@ -72,7 +72,7 @@ public class GroupChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     }
 
     private void configureOtherChatViewHolder(OtherChatViewHolder otherChatViewHolder, int position) {
-        NewChat chat = mChats.get(position);
+        GroupChat chat = mChats.get(position);
         User user = mapUidUser.get(chat.senderUid);
         if(user != null) {
             String alphabet = user.displayName.substring(0, 1);

@@ -49,7 +49,6 @@ public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListing
         try {
             //String alphabet = user.email.substring(0, 1);
             holder.txtUsername.setText(user.displayName != null ? user.displayName : user.email);
-            holder.txtEmail.setText(user.email);
             if(StringUtils.isNotEmptyNotNull(user.photoUrl)) {
                 Picasso.with(mContext).load(user.photoUrl).into(holder.profileImage);
             } else {
@@ -60,6 +59,7 @@ public class UserListingRecyclerAdapter extends RecyclerView.Adapter<UserListing
 
             RoomDetails roomDetails = ChatRoomsDBM.getInstance(mContext).getRoomDetails(user.uid);
 
+            holder.txtEmail.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : user.email);
             holder.txtLastMessageTime.setText(roomDetails.lastMessageTime);
 
             if(roomDetails.isMuted) {
