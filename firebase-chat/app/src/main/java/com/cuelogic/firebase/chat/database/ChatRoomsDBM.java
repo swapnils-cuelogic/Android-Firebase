@@ -164,6 +164,33 @@ public class ChatRoomsDBM extends DatabaseManager {
         }
     }
 
+    public void updateLastMessage(String roomId, String message, long timestamp) {
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put(_ChatRooms.ROOM_ID, roomId);
+            values.put(_ChatRooms.LAST_MESSAGE, message);
+            values.put(_ChatRooms.LAST_MESSAGE_TIMESTAMP, timestamp);
+
+            Cursor cur = db.query(_ChatRooms.TABLE, null,
+                    _ChatRooms.ROOM_ID + " = ?", new String[] { roomId },
+                    null, null, null);
+
+            if (cur.moveToFirst()) {
+                db.update(_ChatRooms.TABLE, values, _ChatRooms.ROOM_ID + " = ?", new String[] { roomId });
+            } else {
+                db.insert(_ChatRooms.TABLE, null, values);
+            }
+            cur.close();
+            db.close();
+        } catch(SQLException se){
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public RoomDetails getRoomDetails(String roomId) {
         RoomDetails roomDetails = new RoomDetails();
         try {

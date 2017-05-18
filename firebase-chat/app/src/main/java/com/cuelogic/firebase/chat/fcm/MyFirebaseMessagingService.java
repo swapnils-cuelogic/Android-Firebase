@@ -65,9 +65,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
                 if(type == 2) {
-                    ChatRoomsDBM.getInstance(this).addMessage(roomId, message, timestamp);
-                    sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
                     if(firebaseUser != null && !uid.equals(firebaseUser.getUid())) {
+                        ChatRoomsDBM.getInstance(this).addMessage(roomId, message, timestamp);
+                        sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
                         new GroupChatInteractor().syncMessageFromFirebaseUser(roomId);
                         // Don't show notification if chat activity is open.
                         if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(roomId) && !ChatRoomsDBM.getInstance(this).isMuted(roomId) && SharedPrefUtil.isNotificationsEnabled(this)) {
@@ -77,10 +77,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         }
                     }
                 } else {
-                    ChatRoomsDBM.getInstance(this).addMessage(uid, message, timestamp);
-                    sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
                     //To get sync chat with real time database on push notification received
                     if(firebaseUser != null && !uid.equals(firebaseUser.getUid())) {
+                        ChatRoomsDBM.getInstance(this).addMessage(uid, message, timestamp);
+                        sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
                         new ChatInteractor().syncMessageFromFirebaseUser(FirebaseAuth.getInstance().getCurrentUser().getUid(), uid);
                         // Don't show notification if chat activity is open.
                         if (!FirebaseChatMainApp.isRoomsOpen() && !FirebaseChatMainApp.isChattingWithSameUser(uid) && !ChatRoomsDBM.getInstance(this).isMuted(uid) && SharedPrefUtil.isNotificationsEnabled(this)) {

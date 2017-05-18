@@ -81,6 +81,14 @@ public class GroupsFragment extends BaseFragment implements GetUsersContract.Vie
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(mGroupListingRecyclerAdapter != null) {
+            mGroupListingRecyclerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         getActivity().unregisterReceiver(messageReceivedReceiver);

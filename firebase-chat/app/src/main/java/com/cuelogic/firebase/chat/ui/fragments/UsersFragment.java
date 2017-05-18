@@ -78,6 +78,14 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (mUserListingRecyclerAdapter != null) {
+            mUserListingRecyclerAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         getActivity().unregisterReceiver(messageReceivedReceiver);

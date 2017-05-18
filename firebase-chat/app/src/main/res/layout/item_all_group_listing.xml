@@ -17,7 +17,7 @@
         android:layout_height="@dimen/user_icon_height"
         android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
-        android:background="@drawable/circle_other"
+        android:background="@drawable/circle_mine"
         android:src="@drawable/circle_other"
         app:civ_border_color="@color/border"
         app:civ_border_width="1dp" />
@@ -37,7 +37,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/grey_700"
+        android:textColor="@color/grey_800"
         tools:text="abcd@xyz.com" />
 
     <TextView

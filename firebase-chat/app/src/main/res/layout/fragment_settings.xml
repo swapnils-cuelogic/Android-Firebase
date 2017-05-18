@@ -65,7 +65,7 @@
             android:padding="@dimen/padding_avg"
             android:text="@string/notification_alert"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/grey_700" />
+            android:textColor="@color/grey_800" />
 
         <TextView
             android:layout_width="match_parent"
@@ -91,7 +91,7 @@
                 android:layout_toLeftOf="@+id/text_view_app_version"
                 android:text="@string/app_version"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/grey_700" />
+                android:textColor="@color/grey_800" />
 
             <TextView
                 android:id="@+id/text_view_app_version"
@@ -99,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/grey_700" />
+                android:textColor="@color/grey_800" />
 
         </RelativeLayout>
 
@@ -116,7 +116,7 @@
             android:padding="@dimen/padding_avg"
             android:text="@string/privacy_policy"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/grey_700" />
+            android:textColor="@color/grey_800" />
 
         <View
             android:layout_width="match_parent"
@@ -131,7 +131,7 @@
             android:padding="@dimen/padding_avg"
             android:text="@string/terms_and_conditions"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/grey_700" />
+            android:textColor="@color/grey_800" />
 
         <TextView
             android:layout_width="match_parent"

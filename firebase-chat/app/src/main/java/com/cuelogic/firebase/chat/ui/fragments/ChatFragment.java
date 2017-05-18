@@ -5,13 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.ChatContract;
@@ -24,14 +22,21 @@ import com.cuelogic.firebase.chat.ui.adapters.ChatRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.StringUtils;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class ChatFragment extends BaseFragment implements ChatContract.View, TextView.OnEditorActionListener {
+public class ChatFragment extends BaseFragment implements ChatContract.View, View.OnClickListener {
     private User user;
+    private Map<String, User> mapUidUser = new HashMap<>();
     private RecyclerView mRecyclerViewChat;
     private EditText mETxtMessage;
 
@@ -40,6 +45,7 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
     private ChatRecyclerAdapter mChatRecyclerAdapter;
 
     private ChatPresenter mChatPresenter;
+    private ImageView imgSendMessage;
 
     public static ChatFragment newInstance(User user) {
         Bundle args = new Bundle();
@@ -72,6 +78,7 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
     private void bindViews(View view) {
         mRecyclerViewChat = (RecyclerView) view.findViewById(R.id.recycler_view_chat);
         mETxtMessage = (EditText) view.findViewById(R.id.edit_text_message);
+        imgSendMessage = (ImageView) view.findViewById(R.id.imgSendMessage);
     }
 
     @Override
@@ -82,6 +89,7 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
 
     private void init() {
         user = getArguments().getParcelable(Constants.ARG_USER);
+        putChatUsersInMap();
 
         ChatRoomsDBM.getInstance(mContext).clearCount(user.uid);
         getActivity().sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
@@ -92,30 +100,40 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
         mProgressDialog.setIndeterminate(true);
         //mProgressDialog.show();
 
-        mETxtMessage.setOnEditorActionListener(this);
+        imgSendMessage.setOnClickListener(this);
 
         mChatPresenter = new ChatPresenter(this);
         mChatPresenter.syncMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
         mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
     }
 
-    @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEND) {
-            sendMessage();
-            return true;
-        }
-        return false;
+    private void putChatUsersInMap() {
+        mapUidUser.put(user.uid, user);
+        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if (user != null) {
+                    mapUidUser.put(user.uid, user);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void sendMessage() {
         String message = mETxtMessage.getText().toString();
-        if(StringUtils.isNotEmptyNotNull(message.trim())) {
+        if (StringUtils.isNotEmptyNotNull(message.trim())) {
             String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
             String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();
             String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             Chat chat = new Chat(sender, user.email, senderUid, user.uid, message, System.currentTimeMillis(), displayName);
             mChatPresenter.sendMessage(getActivity().getApplicationContext(), chat, user.firebaseToken);
+            ChatRoomsDBM.getInstance(mContext).updateLastMessage(chat.receiverUid, chat.message, chat.timestamp);
         }
     }
 
@@ -134,7 +152,7 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
     public void onGetMessagesSuccess(Chat chat) {
         mProgressDialog.dismiss();
         if (mChatRecyclerAdapter == null) {
-            mChatRecyclerAdapter = new ChatRecyclerAdapter(new ArrayList<Chat>());
+            mChatRecyclerAdapter = new ChatRecyclerAdapter(mContext, new ArrayList<Chat>(), mapUidUser);
             mRecyclerViewChat.setAdapter(mChatRecyclerAdapter);
         }
         mChatRecyclerAdapter.add(chat);
@@ -151,6 +169,15 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Tex
         if (mChatRecyclerAdapter == null || mChatRecyclerAdapter.getItemCount() == 0) {
             mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
                     pushNotificationEvent.getUid());
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.imgSendMessage:
+                sendMessage();
+                break;
         }
     }
 }

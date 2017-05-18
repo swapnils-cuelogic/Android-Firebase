@@ -37,7 +37,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@color/grey_700"
+        android:textColor="@color/grey_800"
         tools:text="abcd@xyz.com" />
 
     <TextView

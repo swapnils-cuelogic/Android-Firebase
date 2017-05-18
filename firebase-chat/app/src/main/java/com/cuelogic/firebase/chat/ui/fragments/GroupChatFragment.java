@@ -2,17 +2,14 @@ package com.cuelogic.firebase.chat.ui.fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.chat.GroupChatContract;
@@ -38,7 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GroupChatFragment extends BaseFragment implements GroupChatContract.View, TextView.OnEditorActionListener {
+public class GroupChatFragment extends BaseFragment implements GroupChatContract.View, View.OnClickListener {
     private Group group;
     private Map<String, User> mapUidUser = new HashMap<>();
 
@@ -50,6 +47,7 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
     private GroupChatRecyclerAdapter mGroupChatRecyclerAdapter;
 
     private GroupChatPresenter mChatPresenter;
+    private ImageView imgSendMessage;
 
     public static GroupChatFragment newInstance(Group group) {
         Bundle args = new Bundle();
@@ -82,6 +80,7 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
     private void bindViews(View view) {
         mRecyclerViewChat = (RecyclerView) view.findViewById(R.id.recycler_view_chat);
         mETxtMessage = (EditText) view.findViewById(R.id.edit_text_message);
+        imgSendMessage = (ImageView) view.findViewById(R.id.imgSendMessage);
     }
 
     @Override
@@ -104,7 +103,7 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
         mProgressDialog.setIndeterminate(true);
         //mProgressDialog.show();
 
-        mETxtMessage.setOnEditorActionListener(this);
+        imgSendMessage.setOnClickListener(this);
 
         mChatPresenter = new GroupChatPresenter(this);
         mChatPresenter.syncMessage(group.roomId);
@@ -112,49 +111,43 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
     }
 
     private void setUpUsersMapAndPushTokens() {
-        new AsyncTask<String, Integer, String>() {
-
-            @Override
-            protected String doInBackground(String... params) {
-                for (String uid:
-                     group.users) {
-                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(uid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            if(user != null) {
-                                mapUidUser.put(user.uid, user);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+        for (String uid :
+                group.users) {
+            FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(uid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user != null) {
+                        mapUidUser.put(user.uid, user);
+                    }
                 }
-                return null;
-            }
-        }.execute();
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     @Override
-    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-        if (actionId == EditorInfo.IME_ACTION_SEND) {
-            sendMessage();
-            return true;
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.imgSendMessage:
+                sendMessage();
+                break;
         }
-        return false;
     }
 
     private void sendMessage() {
         String message = mETxtMessage.getText().toString();
-        if(StringUtils.isNotEmptyNotNull(message.trim())) {
+        if (StringUtils.isNotEmptyNotNull(message.trim())) {
             /*String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
             String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();*/
             String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             GroupChat groupChat = new GroupChat(group.roomId, senderUid, message, System.currentTimeMillis());
             mChatPresenter.sendMessage(getActivity().getApplicationContext(), groupChat);
+            ChatRoomsDBM.getInstance(mContext).updateLastMessage(groupChat.roomId, groupChat.message, groupChat.timestamp);
         }
     }
 
@@ -173,7 +166,7 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
     public void onGetMessagesSuccess(GroupChat newChat) {
         mProgressDialog.dismiss();
         if (mGroupChatRecyclerAdapter == null) {
-            mGroupChatRecyclerAdapter = new GroupChatRecyclerAdapter(new ArrayList<GroupChat>(), mapUidUser);
+            mGroupChatRecyclerAdapter = new GroupChatRecyclerAdapter(mContext, new ArrayList<GroupChat>(), mapUidUser);
             mRecyclerViewChat.setAdapter(mGroupChatRecyclerAdapter);
         }
         mGroupChatRecyclerAdapter.add(newChat);
