@@ -29,7 +29,7 @@ public class GroupChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private static final int VIEW_TYPE_OTHER = 2;
     private Map<String, User> mapUidUser = new HashMap<>();
     private List<GroupChat> mChats;
-    private static String TIME_FORMAT = "h:mm a";
+    private static String TIME_FORMAT = "d/M/yyyy h:mm a";
     private SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT);
 
     public GroupChatRecyclerAdapter(Context context, List<GroupChat> chats, Map<String, User> mapUidUser) {

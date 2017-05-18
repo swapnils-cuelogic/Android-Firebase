@@ -60,15 +60,14 @@
                 android:gravity="center"
                 android:text="@string/lets_get_connected"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
+                android:textColor="@color/white" />
 
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/margin_huge"
-                android:layout_marginRight="@dimen/margin_huge"
+                android:layout_marginLeft="@dimen/margin_big"
+                android:layout_marginRight="@dimen/margin_big"
                 android:layout_marginTop="@dimen/margin_avg" />
         </LinearLayout>
 

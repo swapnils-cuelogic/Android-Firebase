@@ -28,7 +28,7 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private Map<String, User> mapUidUser = new HashMap<>();
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;
-    private static String TIME_FORMAT = "h:mm a";
+    private static String TIME_FORMAT = "d/M/yyyy h:mm a";
     private SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT);
 
     private List<Chat> mChats;
