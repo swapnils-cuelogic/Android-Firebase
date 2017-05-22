@@ -19,6 +19,7 @@ import com.cuelogic.firebase.chat.events.PushNotificationEvent;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.GroupChat;
 import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.ui.activities.GroupChatActivity;
 import com.cuelogic.firebase.chat.ui.adapters.GroupChatRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.StringUtils;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -92,6 +94,8 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
     private void init() {
         group = getArguments().getParcelable(Constants.ARG_GROUP);
 
+        setChatTitle();
+
         ChatRoomsDBM.getInstance(mContext).clearCount(group.roomId);
         getActivity().sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
 
@@ -108,6 +112,34 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
         mChatPresenter = new GroupChatPresenter(this);
         mChatPresenter.syncMessage(group.roomId);
         mChatPresenter.getMessage(group.roomId);
+    }
+
+    private void setChatTitle() {
+        if(group.type == Constants.TYPE_GROUP) {
+            // set toolbar title
+            ((GroupChatActivity)getActivity()).mToolbar.setTitle(group.displayName);
+            ((GroupChatActivity)getActivity()).mToolbar.setSubtitle(group.users.size()+" Members");
+        } else {
+            String selfId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            for (String uid:
+                    group.users) {
+                if(!selfId.equals(uid)) {
+                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(uid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            ((GroupChatActivity)getActivity()).mToolbar.setTitle(user.displayName);
+                            ((GroupChatActivity)getActivity()).mToolbar.setSubtitle(user.email);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                    break;
+                }
+            }
+        }
     }
 
     private void setUpUsersMapAndPushTokens() {
@@ -142,11 +174,13 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
     private void sendMessage() {
         String message = mETxtMessage.getText().toString();
         if (StringUtils.isNotEmptyNotNull(message.trim())) {
-            /*String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-            String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();*/
+            String title = group.displayName;
+            if(group.type == Constants.TYPE_INDIVIDUAL)
+                title = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+
             String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             GroupChat groupChat = new GroupChat(group.roomId, senderUid, message, System.currentTimeMillis());
-            mChatPresenter.sendMessage(getActivity().getApplicationContext(), groupChat);
+            mChatPresenter.sendMessage(getActivity().getApplicationContext(), groupChat, title);
             ChatRoomsDBM.getInstance(mContext).updateLastMessage(groupChat.roomId, groupChat.message, groupChat.timestamp);
         }
     }
@@ -166,7 +200,7 @@ public class GroupChatFragment extends BaseFragment implements GroupChatContract
     public void onGetMessagesSuccess(GroupChat newChat) {
         mProgressDialog.dismiss();
         if (mGroupChatRecyclerAdapter == null) {
-            mGroupChatRecyclerAdapter = new GroupChatRecyclerAdapter(mContext, new ArrayList<GroupChat>(), mapUidUser);
+            mGroupChatRecyclerAdapter = new GroupChatRecyclerAdapter(mContext, group.type, new ArrayList<GroupChat>(), mapUidUser);
             mRecyclerViewChat.setAdapter(mGroupChatRecyclerAdapter);
         }
         mGroupChatRecyclerAdapter.add(newChat);

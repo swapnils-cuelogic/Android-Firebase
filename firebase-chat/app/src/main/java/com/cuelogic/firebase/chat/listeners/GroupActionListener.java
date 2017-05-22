@@ -7,5 +7,5 @@ import com.cuelogic.firebase.chat.models.GroupWithTokens;
  */
 
 public interface GroupActionListener {
-    void onCreateGroupRequest(GroupWithTokens groupWithTokens);
+    void onCreateGroupRequest(GroupWithTokens groupWithTokens, Callback callback);
 }

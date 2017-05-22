@@ -77,7 +77,7 @@ public class ChatInteractor implements ChatContract.Interactor {
                                                 long timestamp, String firebaseToken, String receiverFirebaseToken) {
         Logger.vLog(TAG, "sendPushNotificationToReceiver()", true);
         FcmNotificationBuilder.initialize()
-                .type(1).title(displayName).message(message)
+                .title(displayName).message(message)
                 .username(username).uid(uid).timeStamp(timestamp)
                 .firebaseToken(firebaseToken).receiverFirebaseToken(receiverFirebaseToken)
                 .send();

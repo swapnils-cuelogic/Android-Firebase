@@ -15,8 +15,8 @@ public class GroupChatPresenter implements GroupChatContract.Presenter, GroupCha
     }
 
     @Override
-    public void sendMessage(Context context, GroupChat newChat) {
-        mChatInteractor.sendMessageToFirebaseUser(context, newChat);
+    public void sendMessage(Context context, GroupChat newChat, String title) {
+        mChatInteractor.sendMessageToFirebaseUser(context, newChat, title);
     }
 
     @Override

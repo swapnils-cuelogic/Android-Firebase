@@ -2,6 +2,7 @@ package com.cuelogic.firebase.chat.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import java.util.List;
 
@@ -9,19 +10,22 @@ import java.util.List;
  * Created by Harshal Vibhandik on 10/05/17.
  */
 
-public class Group implements Parcelable {
+public class Group implements Parcelable, Comparable<Group> {
     public String roomId;
+    public int type;
     public String displayName;
+    public String photoUrl;
     public long createdTime;
     public String createdBy;
-    public long lastUpdatedTime;
+    public Long lastUpdatedTime;
     public List<String> users;
 
     public Group() {
     }
 
-    public Group(String roomId, String displayName, long createdTime, String createdBy, long lastUpdatedTime, List<String> users) {
+    public Group(String roomId, int type, String displayName, long createdTime, String createdBy, long lastUpdatedTime, List<String> users) {
         this.roomId = roomId;
+        this.type = type;
         this.displayName = displayName;
         this.createdTime = createdTime;
         this.createdBy = createdBy;
@@ -43,7 +47,9 @@ public class Group implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.roomId);
+        dest.writeInt(this.type);
         dest.writeString(this.displayName);
+        dest.writeString(this.photoUrl);
         dest.writeLong(this.createdTime);
         dest.writeString(this.createdBy);
         dest.writeLong(this.lastUpdatedTime);
@@ -52,7 +58,9 @@ public class Group implements Parcelable {
 
     protected Group(Parcel in) {
         this.roomId = in.readString();
+        this.type = in.readInt();
         this.displayName = in.readString();
+        this.photoUrl = in.readString();
         this.createdTime = in.readLong();
         this.createdBy = in.readString();
         this.lastUpdatedTime = in.readLong();
@@ -68,4 +76,9 @@ public class Group implements Parcelable {
             return new Group[size];
         }
     };
+
+    @Override
+    public int compareTo(@NonNull Group group) {
+        return group.lastUpdatedTime.compareTo(this.lastUpdatedTime);
+    }
 }

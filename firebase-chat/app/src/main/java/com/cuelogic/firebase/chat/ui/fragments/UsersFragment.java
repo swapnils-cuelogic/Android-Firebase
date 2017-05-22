@@ -19,17 +19,28 @@ import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersContract;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersPresenter;
 import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
+import com.cuelogic.firebase.chat.listeners.Callback;
 import com.cuelogic.firebase.chat.listeners.UsersToolbarActionModeCallback;
+import com.cuelogic.firebase.chat.models.Group;
+import com.cuelogic.firebase.chat.models.GroupWithTokens;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.activities.ChatActivity;
+import com.cuelogic.firebase.chat.ui.activities.GroupChatActivity;
+import com.cuelogic.firebase.chat.ui.activities.UserListingActivity;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingRecyclerAdapter;
 import com.cuelogic.firebase.chat.ui.dialogs.CreateGroupDialog;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.ItemClickSupport;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UsersFragment extends BaseFragment implements GetUsersContract.View, ItemClickSupport.OnItemClickListener, ItemClickSupport.OnItemLongClickListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String ARG_TYPE = "type";
@@ -44,6 +55,7 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
     private GetUsersPresenter mGetUsersPresenter;
     private ActionMode mActionMode;
 
+    private User currentUser;
     private List<User> selectedUsers;
 
     public UserListingRecyclerAdapter getUserListingRecyclerAdapter() {
@@ -61,7 +73,7 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
         fragment.setArguments(args);
         return fragment;
     }
-
+/*
     private BroadcastReceiver messageReceivedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -84,12 +96,12 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
             mUserListingRecyclerAdapter.notifyDataSetChanged();
         }
     }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         getActivity().unregisterReceiver(messageReceivedReceiver);
     }
+*/
 
     @Nullable
     @Override
@@ -149,6 +161,17 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         });
+        String currentUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        if (currentUid != null) {
+            for (User user :
+                    users) {
+                if (currentUid.equals(user.uid)) {
+                    currentUser = user;
+                    users.remove(user);
+                    break;
+                }
+            }
+        }
         mUserListingRecyclerAdapter = new UserListingRecyclerAdapter(mContext, users);
         mRecyclerViewAllUserListing.setAdapter(mUserListingRecyclerAdapter);
         mUserListingRecyclerAdapter.notifyDataSetChanged();
@@ -167,8 +190,6 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
 
     @Override
     public void onGetUserSuccess(User user) {
-        selectedUsers.add(user);
-        new CreateGroupDialog(getActivity(), selectedUsers).show();
     }
 
     @Override
@@ -187,11 +208,68 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
     }
 
     @Override
-    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+    public void onItemClicked(RecyclerView recyclerView, final int position, View v) {
         if (mActionMode != null)
             onListItemSelect(position);
-        else
-            ChatActivity.startActivity(getActivity(), mUserListingRecyclerAdapter.getUser(position));
+        else {
+            FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(currentUser.uid).getRef()
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            currentUser = dataSnapshot.getValue(User.class);
+                            final User user = mUserListingRecyclerAdapter.getUser(position);
+                            List<String> intersection = new ArrayList<>();
+                            if(currentUser.indRooms != null)
+                                intersection.addAll(currentUser.indRooms);
+                            if(user.indRooms != null)
+                                intersection.retainAll(user.indRooms);
+                            String roomId = null;
+                            if (intersection.size() > 0) {
+                                roomId = intersection.get(0);
+                                FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(roomId).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        Group group = dataSnapshot.getValue(Group.class);
+                                        GroupChatActivity.startActivity(mContext, group, user.uid);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            } else {
+                                roomId = FirebaseDatabase.getInstance().getReference().push().getKey();
+                                long createdTime = System.currentTimeMillis();
+                                List<String> users = new ArrayList<>();
+                                List<String> tokens = new ArrayList<>();
+                                users.add(currentUser.uid);
+                                users.add(user.uid);
+                                tokens.add(currentUser.firebaseToken);
+                                tokens.add(user.firebaseToken);
+                                final Group group = new Group(roomId, Constants.TYPE_INDIVIDUAL, null, createdTime, currentUser.uid, createdTime, users);
+                                ((UserListingActivity) getActivity()).onCreateGroupRequest(
+                                        new GroupWithTokens(group, tokens),
+                                        new Callback() {
+                                            @Override
+                                            public void onSuccess() {
+                                                GroupChatActivity.startActivity(mContext, group, user.uid);
+                                            }
+
+                                            @Override
+                                            public void onFailure(String message) {
+
+                                            }
+                                        });
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+        }
     }
 
     @Override
@@ -234,11 +312,13 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
     //Set action mode null after use
     public void createGroupOfUsers(List<User> selectedUsers) {
         this.selectedUsers = selectedUsers;
-        mGetUsersPresenter.getUser(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        selectedUsers.add(currentUser);
+        new CreateGroupDialog(getActivity(), selectedUsers).show();
     }
+
     public void muteNotifications(List<User> selectedUsers) {
         List<String> roomIds = new ArrayList<>();
-        for (User user:
+        for (User user :
                 selectedUsers) {
             roomIds.add(user.uid);
         }
@@ -247,9 +327,10 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
             mUserListingRecyclerAdapter.notifyDataSetChanged();
         }
     }
+
     public void unmuteNotifications(List<User> selectedUsers) {
         List<String> roomIds = new ArrayList<>();
-        for (User user:
+        for (User user :
                 selectedUsers) {
             roomIds.add(user.uid);
         }

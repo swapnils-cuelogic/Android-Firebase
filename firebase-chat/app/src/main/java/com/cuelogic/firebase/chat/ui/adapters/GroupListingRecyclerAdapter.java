@@ -14,7 +14,15 @@ import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.RoomDetails;
+import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.StringUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -43,18 +51,42 @@ public class GroupListingRecyclerAdapter extends RecyclerView.Adapter<GroupListi
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         Group group = mGroups.get(position);
         try {
             //String alphabet = user.email.substring(0, 1);
-            holder.txtGroupName.setText(group.displayName);
-            holder.groupImage.setImageResource(R.drawable.ic_group_white_24dp);
             /** Change background color of the selected items in list view  **/
             holder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? 0x9934B5E4 : Color.TRANSPARENT);
 
-            RoomDetails roomDetails = ChatRoomsDBM.getInstance(mContext).getRoomDetails(group.roomId);
+            final RoomDetails roomDetails = ChatRoomsDBM.getInstance(mContext).getRoomDetails(group.roomId);
 
-            holder.txtMembers.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : group.users.size()+" Members");
+            if(group.type == Constants.TYPE_GROUP) {
+                holder.txtGroupName.setText(group.displayName);
+                holder.groupImage.setImageResource(R.drawable.ic_group_white_24dp);
+                holder.txtMembers.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : group.users.size() + " Members");
+            } else {
+                String selfId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                for (String uid:
+                        group.users) {
+                    if(!selfId.equals(uid)) {
+                        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(uid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                User user = dataSnapshot.getValue(User.class);
+                                holder.txtGroupName.setText(user.displayName);
+                                Picasso.with(mContext).load(user.photoUrl).into(holder.groupImage);
+                                holder.txtMembers.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : user.email);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                        break;
+                    }
+                }
+            }
+
             holder.txtLastMessageTime.setText(roomDetails.lastMessageTime);
 
             if(roomDetails.isMuted) {

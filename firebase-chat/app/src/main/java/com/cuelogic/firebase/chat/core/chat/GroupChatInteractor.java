@@ -14,6 +14,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+
 public class GroupChatInteractor implements GroupChatContract.Interactor {
     private static final String TAG = "ChatInteractor";
 
@@ -38,19 +40,27 @@ public class GroupChatInteractor implements GroupChatContract.Interactor {
     }
 
     @Override
-    public void sendMessageToFirebaseUser(final Context context, final GroupChat newChat) {
+    public void sendMessageToFirebaseUser(final Context context, final GroupChat newChat, final String title) {
         FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).keepSynced(true);
+
         String messageId = FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).push().getKey();
+
         FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).child(messageId).setValue(newChat).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()) {
-                    //Need to write this code to send notifications to all users
-                    sendPushNotificationToReceivers("Group Message", newChat.senderUid, newChat.roomId, newChat.message, newChat.timestamp);
+
+                    sendPushNotificationToReceivers(title, newChat.senderUid, newChat.roomId, newChat.message, newChat.timestamp);
+
+                    HashMap<String, Object> result = new HashMap<>();
+                    result.put("lastUpdatedTime", newChat.timestamp);
+                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(newChat.roomId).keepSynced(true);
+                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS)
+                            .child(newChat.roomId)
+                            .updateChildren(result);
                     mOnSendMessageListener.onSendMessageSuccess();
                 } else {
                     mOnSendMessageListener.onSendMessageFailure("Unable to send message: ");
-                    //getMessageFromFirebaseUser(newChat.roomId);
                 }
             }
         });
@@ -58,7 +68,7 @@ public class GroupChatInteractor implements GroupChatContract.Interactor {
 
     private void sendPushNotificationToReceivers(String title, String uid, String roomId, String message, long timestamp) {
         FcmNotificationBuilder.initialize()
-                .type(2).title(title).message(message)
+                .title(title).message(message)
                 .uid(uid).roomId(roomId).timeStamp(timestamp)
                 .send();
     }

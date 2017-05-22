@@ -17,7 +17,7 @@ public class GroupChatActivity extends BaseActivity {
 
     private static final String TAG = GroupChatActivity.class.getSimpleName();
 
-    public static void startActivity(Context context, Group group) {
+    public static void startActivity(Context context, Group group, String uid) {
         Intent intent = new Intent(context, GroupChatActivity.class);
         intent.putExtra(Constants.ARG_GROUP, group);
         context.startActivity(intent);
@@ -34,10 +34,6 @@ public class GroupChatActivity extends BaseActivity {
         group = getIntent().getParcelableExtra(Constants.ARG_GROUP);
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             if (group != null) {
-                // set toolbar title
-                mToolbar.setTitle(group.displayName);
-
-                mToolbar.setSubtitle(group.users.size()+" Members");
                 enableBackButton();
                 // set the register screen fragment
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();

@@ -32,7 +32,6 @@
         android:id="@+id/text_view_username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/text_view_last_message_time"
         android:layout_toRightOf="@+id/space"
         android:ellipsize="end"
         android:maxLines="1"
@@ -45,7 +44,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_view_username"
-        android:layout_toLeftOf="@+id/image_is_muted"
         android:layout_toRightOf="@+id/space"
         android:ellipsize="end"
         android:maxLines="1"
@@ -53,7 +51,7 @@
         android:textColor="@color/grey_600"
         tools:text="3 Members" />
 
-    <TextView
+    <!--<TextView
         android:id="@+id/text_view_last_message_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,5 +83,5 @@
         android:maxLines="1"
         android:textColor="@color/white"
         android:textSize="10dp"
-        tools:text="2" />
+        tools:text="2" />-->
 </RelativeLayout>

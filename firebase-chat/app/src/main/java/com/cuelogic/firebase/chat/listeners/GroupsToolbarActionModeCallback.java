@@ -64,7 +64,7 @@ public class GroupsToolbarActionModeCallback implements ActionMode.Callback {
         }
         mode.finish();//Finish action mode
 
-        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(1);//Get recycler view fragment
+        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(0);//Get recycler view fragment
 
         switch (item.getItemId()) {
             case R.id.action_mute_notifications:
@@ -85,7 +85,7 @@ public class GroupsToolbarActionModeCallback implements ActionMode.Callback {
         //When action mode destroyed remove selected selections and set action mode to null
         //First check current fragment action mode
         groupListingRecyclerAdapter.removeSelection();  // remove selection
-        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(1);//Get recycler fragment
+        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(0);//Get recycler fragment
         if (recyclerFragment != null)
             ((GroupsFragment) recyclerFragment).setNullToActionMode();//Set action mode null
     }

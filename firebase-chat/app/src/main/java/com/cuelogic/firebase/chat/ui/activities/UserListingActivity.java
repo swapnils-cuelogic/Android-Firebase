@@ -18,6 +18,7 @@ import com.cuelogic.firebase.chat.core.logout.LogoutContract;
 import com.cuelogic.firebase.chat.core.logout.LogoutPresenter;
 import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.fcm.FcmTopicBuilder;
+import com.cuelogic.firebase.chat.listeners.Callback;
 import com.cuelogic.firebase.chat.listeners.GroupActionListener;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.GroupWithTokens;
@@ -108,13 +109,13 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
             public void onPageScrollStateChanged(int state) {
                 Fragment recyclerFragment0 = getFragment(0);//Get recycler fragment
                 if (recyclerFragment0 != null) {
-                    if(((UsersFragment) recyclerFragment0).getActionMode() != null)
-                        ((UsersFragment) recyclerFragment0).getActionMode().finish();
+                    if(((GroupsFragment) recyclerFragment0).getActionMode() != null)
+                        ((GroupsFragment) recyclerFragment0).getActionMode().finish();
                 }
                 Fragment recyclerFragment1 = getFragment(1);//Get recycler fragment
                 if (recyclerFragment1 != null) {
-                    if(((GroupsFragment) recyclerFragment1).getActionMode() != null)
-                        ((GroupsFragment) recyclerFragment1).getActionMode().finish();
+                    if(((UsersFragment) recyclerFragment1).getActionMode() != null)
+                        ((UsersFragment) recyclerFragment1).getActionMode().finish();
                 }
             }
         });
@@ -187,7 +188,7 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
     }
 
     @Override
-    public void onCreateGroupRequest(GroupWithTokens groupWithTokens) {
+    public void onCreateGroupRequest(GroupWithTokens groupWithTokens, final Callback callback) {
         showProgress();
         final Group group = groupWithTokens.group;
         final List<String> tokens = groupWithTokens.tokens;
@@ -199,20 +200,23 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()) {
+                    final String groupChild = group.type == Constants.TYPE_INDIVIDUAL ? Constants.ARG_IND_ROOMS : Constants.ARG_GRP_ROOMS;
                     FirebaseDatabase.getInstance().getReference()
                             .child(Constants.ARG_USERS).keepSynced(true);
                     for (final String userId:
                          group.users) {
                         FirebaseDatabase.getInstance().getReference()
-                                .child(Constants.ARG_USERS).child(userId).child(Constants.ARG_ROOMS).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                                .child(Constants.ARG_USERS).child(userId).child(groupChild)
+                                .getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 List<String> existingRooms = (List<String>)dataSnapshot.getValue();
                                 if(existingRooms == null)
                                     existingRooms = new ArrayList<>();
-                                existingRooms.add(group.roomId);
+                                if(!existingRooms.contains(group.roomId))
+                                    existingRooms.add(group.roomId);
                                 FirebaseDatabase.getInstance().getReference()
-                                        .child(Constants.ARG_USERS).child(userId).child(Constants.ARG_ROOMS).setValue(existingRooms);
+                                        .child(Constants.ARG_USERS).child(userId).child(groupChild).setValue(existingRooms);
                             }
 
                             @Override
@@ -228,9 +232,15 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                             .tokens(tokens)
                             .send();
 
+                    if(callback != null) {
+                        callback.onSuccess();
+                    }
                     hideProgress();
                 } else {
                     showToastShort(getString(R.string.error_group_creation));
+                    if(callback != null) {
+                        callback.onFailure(getString(R.string.error_group_creation));
+                    }
                     hideProgress();
                 }
             }

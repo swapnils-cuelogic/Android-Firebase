@@ -33,6 +33,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GroupsFragment extends BaseFragment implements GetUsersContract.View, ItemClickSupport.OnItemClickListener, ItemClickSupport.OnItemLongClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -60,9 +61,7 @@ public class GroupsFragment extends BaseFragment implements GetUsersContract.Vie
     private BroadcastReceiver messageReceivedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if(mGroupListingRecyclerAdapter != null) {
-                mGroupListingRecyclerAdapter.notifyDataSetChanged();
-            }
+            refreshGroups();
         }
     };
 
@@ -150,7 +149,7 @@ public class GroupsFragment extends BaseFragment implements GetUsersContract.Vie
         if (mActionMode != null)
             onListItemSelect(position);
         else
-            GroupChatActivity.startActivity(getActivity(), mGroupListingRecyclerAdapter.getGroup(position));
+            GroupChatActivity.startActivity(getActivity(), mGroupListingRecyclerAdapter.getGroup(position), null);
     }
 
     @Override
@@ -237,29 +236,33 @@ public class GroupsFragment extends BaseFragment implements GetUsersContract.Vie
             }
         });
         if(user != null) {
-            List<String> groupIds = user.rooms;
-            if(groupIds != null) {
-                for (String groupId:
-                     groupIds) {
-                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(groupId).getRef().keepSynced(true);
-                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(groupId).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            Group group = dataSnapshot.getValue(Group.class);
-                            if(group != null) {
-                                groups.add(group);
-                                mGroupListingRecyclerAdapter.notifyDataSetChanged();
-                                FirebaseMessaging.getInstance().subscribeToTopic(group.roomId); //Not needed
-                            }
+            List<String> chatIds = new ArrayList<>();
+            if(user.indRooms != null)
+                chatIds.addAll(user.indRooms);
+            if(user.grpRooms != null)
+                chatIds.addAll(user.grpRooms);
+            for (String groupId:
+                    chatIds) {
+                FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(groupId).getRef().keepSynced(true);
+                FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(groupId).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        final Group group = dataSnapshot.getValue(Group.class);
+
+                        if(group != null) {
+                            groups.add(group);
+                            Collections.sort(groups);
+                            mGroupListingRecyclerAdapter.notifyDataSetChanged();
+                            FirebaseMessaging.getInstance().subscribeToTopic(group.roomId); //Not needed
                         }
+                    }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                    }
+                });
 
-                }
             }
         }
     }

@@ -16,7 +16,7 @@ public interface GroupChatContract {
     }
 
     interface Presenter {
-        void sendMessage(Context context, GroupChat newChat);
+        void sendMessage(Context context, GroupChat newChat, String title);
 
         void getMessage(String roomId);
 
@@ -24,7 +24,7 @@ public interface GroupChatContract {
     }
 
     interface Interactor {
-        void sendMessageToFirebaseUser(Context context, GroupChat newChat);
+        void sendMessageToFirebaseUser(Context context, GroupChat newChat, String title);
 
         void getMessageFromFirebaseUser(String roomId);
 

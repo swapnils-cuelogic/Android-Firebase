@@ -9,10 +9,9 @@ import com.cuelogic.firebase.chat.ui.fragments.SettingsFragment;
 import com.cuelogic.firebase.chat.ui.fragments.UsersFragment;
 
 public class UserListingPagerAdapter extends FragmentPagerAdapter {
-    private static final Fragment[] sFragments = new Fragment[]{/*UsersFragment.newInstance(UsersFragment.TYPE_CHATS),*/
-            UsersFragment.newInstance(UsersFragment.TYPE_ALL), GroupsFragment.newInstance(UsersFragment.TYPE_ALL), SettingsFragment.newInstance()};
-    private static final String[] sTitles = new String[]{/*"Chats",*/
-            "Users","Groups", "Settings"};
+    private static final Fragment[] sFragments = new Fragment[]{GroupsFragment.newInstance(UsersFragment.TYPE_ALL),
+            UsersFragment.newInstance(UsersFragment.TYPE_ALL), SettingsFragment.newInstance()};
+    private static final String[] sTitles = new String[]{"Chats", "Users", "Settings"};
 
     public UserListingPagerAdapter(FragmentManager fm) {
         super(fm);

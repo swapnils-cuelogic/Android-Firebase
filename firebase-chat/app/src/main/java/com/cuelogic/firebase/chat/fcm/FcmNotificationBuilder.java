@@ -38,7 +38,6 @@ public class FcmNotificationBuilder {
     private static final String KEY_TIMESTAMP = "timestamp";
     private static final String KEY_FCM_TOKEN = "fcm_token";
 
-    private int mType = 1;
     private String mTitle;
     private String mMessage;
     private String mUsername;
@@ -54,11 +53,6 @@ public class FcmNotificationBuilder {
 
     public static FcmNotificationBuilder initialize() {
         return new FcmNotificationBuilder();
-    }
-
-    public FcmNotificationBuilder type(int type) {
-        mType = type;
-        return this;
     }
 
     public FcmNotificationBuilder title(String title) {
@@ -131,13 +125,8 @@ public class FcmNotificationBuilder {
 
     private JSONObject getValidJsonBody() throws JSONException {
         JSONObject jsonObjectBody = new JSONObject();
-        if(mType == 2) {
-            jsonObjectBody.put(KEY_TO, "/topics/"+mRoomId);
-        } else {
-            jsonObjectBody.put(KEY_TO, mReceiverFirebaseToken);
-        }
+        jsonObjectBody.put(KEY_TO, "/topics/"+mRoomId);
         JSONObject jsonObjectData = new JSONObject();
-        jsonObjectData.put(KEY_TYPE, mType);
         jsonObjectData.put(KEY_TITLE, mTitle);
         jsonObjectData.put(KEY_TEXT, mMessage);
         jsonObjectData.put(KEY_USERNAME, mUsername);

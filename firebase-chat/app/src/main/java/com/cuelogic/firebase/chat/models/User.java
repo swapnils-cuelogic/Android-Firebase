@@ -2,10 +2,8 @@ package com.cuelogic.firebase.chat.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.google.firebase.database.IgnoreExtraProperties;
-
 import java.util.List;
+import com.google.firebase.database.IgnoreExtraProperties;
 
 @IgnoreExtraProperties
 public class User implements Parcelable {
@@ -14,7 +12,8 @@ public class User implements Parcelable {
     public String firebaseToken;
     public String displayName;
     public String photoUrl;
-    public List<String> rooms;
+    public List<String> indRooms;
+    public List<String> grpRooms;
 
     public User() {
     }
@@ -39,6 +38,7 @@ public class User implements Parcelable {
         return displayName;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -51,7 +51,8 @@ public class User implements Parcelable {
         dest.writeString(this.firebaseToken);
         dest.writeString(this.displayName);
         dest.writeString(this.photoUrl);
-        dest.writeStringList(this.rooms);
+        dest.writeStringList(this.indRooms);
+        dest.writeStringList(this.grpRooms);
     }
 
     protected User(Parcel in) {
@@ -60,10 +61,11 @@ public class User implements Parcelable {
         this.firebaseToken = in.readString();
         this.displayName = in.readString();
         this.photoUrl = in.readString();
-        this.rooms = in.createStringArrayList();
+        this.indRooms = in.createStringArrayList();
+        this.grpRooms = in.createStringArrayList();
     }
 
-    public static final Creator<User> CREATOR = new Creator<User>() {
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
         public User createFromParcel(Parcel source) {
             return new User(source);
         }

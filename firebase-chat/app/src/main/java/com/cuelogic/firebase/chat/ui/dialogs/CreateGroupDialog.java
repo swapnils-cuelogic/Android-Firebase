@@ -14,6 +14,7 @@ import com.cuelogic.firebase.chat.listeners.GroupActionListener;
 import com.cuelogic.firebase.chat.models.Group;
 import com.cuelogic.firebase.chat.models.GroupWithTokens;
 import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -76,7 +77,7 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
             case R.id.buttonCreate :
                 if(isValidGroupInfo()) {
                     GroupWithTokens groupWithTokens = createGropInfo();
-                    groupActionListener.onCreateGroupRequest(groupWithTokens);
+                    groupActionListener.onCreateGroupRequest(groupWithTokens, null);
                     dismiss();
                 }
                 break;
@@ -108,6 +109,6 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
             users.add(member.uid);
             tokens.add(member.firebaseToken);
         }
-        return new GroupWithTokens(new Group(roomId, displayName, createdTime, createdBy, createdTime, users), tokens);
+        return new GroupWithTokens(new Group(roomId, Constants.TYPE_GROUP, displayName, createdTime, createdBy, createdTime, users), tokens);
     }
 }

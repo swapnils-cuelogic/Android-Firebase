@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.models.GroupChat;
 import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.StringUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
@@ -29,12 +30,14 @@ public class GroupChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
     private static final int VIEW_TYPE_OTHER = 2;
     private Map<String, User> mapUidUser = new HashMap<>();
     private List<GroupChat> mChats;
+    private int roomType;
     private static String TIME_FORMAT = "d/M/yyyy h:mm a";
     private SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT);
 
-    public GroupChatRecyclerAdapter(Context context, List<GroupChat> chats, Map<String, User> mapUidUser) {
+    public GroupChatRecyclerAdapter(Context context, int roomType, List<GroupChat> chats, Map<String, User> mapUidUser) {
         this.mContext = context;
         this.mChats = chats;
+        this.roomType = roomType;
         this.mapUidUser = mapUidUser;
     }
 
@@ -101,7 +104,7 @@ public class GroupChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.
         } else {
             otherChatViewHolder.imgUserPhoto.setImageResource(R.drawable.ic_user_white_24dp);
         }
-        if(user != null && StringUtils.isNotEmptyNotNull(user.displayName)) {
+        if(user != null && roomType == Constants.TYPE_GROUP && StringUtils.isNotEmptyNotNull(user.displayName)) {
             otherChatViewHolder.txtUserName.setText(user.displayName);
             otherChatViewHolder.txtUserName.setVisibility(View.VISIBLE);
         } else {

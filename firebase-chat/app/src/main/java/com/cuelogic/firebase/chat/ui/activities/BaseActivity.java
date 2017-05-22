@@ -20,7 +20,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final String BACKGROUND_COLOR = "background_color";
     private FirebaseRemoteConfig mFirebaseRemoteConfig;*/
 
-    protected Toolbar mToolbar;
+    public Toolbar mToolbar;
     private ProgressDialog pDialog;
 
     @Override
