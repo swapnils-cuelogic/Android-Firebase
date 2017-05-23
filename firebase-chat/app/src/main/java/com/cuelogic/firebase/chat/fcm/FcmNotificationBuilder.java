@@ -34,6 +34,7 @@ public class FcmNotificationBuilder {
     private static final String KEY_UID = "uid";
     private static final String KEY_ROOM_ID = "room_id";
     private static final String KEY_TIMESTAMP = "timestamp";
+    private static final int MAX_MESSAGE_LENGTH = 128;
 
     private String mTitle;
     private String mMessage;
@@ -55,7 +56,11 @@ public class FcmNotificationBuilder {
     }
 
     public FcmNotificationBuilder message(String message) {
-        mMessage = message;
+        if(message.length() > MAX_MESSAGE_LENGTH) {
+            mMessage = message.substring(0, 127);
+        } else {
+            mMessage = message;
+        }
         return this;
     }
 
