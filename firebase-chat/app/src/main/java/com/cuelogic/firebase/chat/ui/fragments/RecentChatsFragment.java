@@ -49,6 +49,7 @@ public class RecentChatsFragment extends BaseFragment implements GetUsersContrac
     private ChatsListingRecyclerAdapter mChatsListingRecyclerAdapter;
 
     private GetUsersPresenter mGetUsersPresenter;
+    private boolean isFirstTime;
 
     public static RecentChatsFragment newInstance(String type) {
         Bundle args = new Bundle();
@@ -68,13 +69,18 @@ public class RecentChatsFragment extends BaseFragment implements GetUsersContrac
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isFirstTime = true;
         getActivity().registerReceiver(messageReceivedReceiver, new IntentFilter(Constants.ACTION_MESSAGE_RECEIVED));
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        refreshGroups();
+        if(isFirstTime) {
+            isFirstTime = false;
+        } else {
+            refreshGroups();
+        }
     }
 
     @Override
