@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersContract;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersPresenter;
-import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.listeners.Callback;
 import com.cuelogic.firebase.chat.listeners.UsersToolbarActionModeCallback;
 import com.cuelogic.firebase.chat.models.Room;
@@ -52,7 +51,6 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
     private ActionMode mActionMode;
 
     private User currentUser;
-    private List<User> selectedUsers;
 
     public UserListingRecyclerAdapter getUserListingRecyclerAdapter() {
         return mUserListingRecyclerAdapter;
@@ -192,7 +190,6 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
         }
         mUserListingRecyclerAdapter = new UserListingRecyclerAdapter(mContext, users);
         mRecyclerViewAllUserListing.setAdapter(mUserListingRecyclerAdapter);
-        mUserListingRecyclerAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -343,35 +340,10 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
     //Set action mode null after use
     public void createGroupOfUsers(List<User> selectedUsers) {
         if(selectedUsers.size() > 0) {
-            this.selectedUsers = selectedUsers;
             selectedUsers.add(currentUser);
             new CreateGroupDialog(getActivity(), selectedUsers).show();
         } else {
             showToastShort(getString(R.string.no_users_to_create_group));
-        }
-    }
-
-    public void muteNotifications(List<User> selectedUsers) {
-        List<String> roomIds = new ArrayList<>();
-        for (User user :
-                selectedUsers) {
-            roomIds.add(user.uid);
-        }
-        ChatRoomsDBM.getInstance(mContext).muteRooms(roomIds);
-        if (mUserListingRecyclerAdapter != null) {
-            mUserListingRecyclerAdapter.notifyDataSetChanged();
-        }
-    }
-
-    public void unmuteNotifications(List<User> selectedUsers) {
-        List<String> roomIds = new ArrayList<>();
-        for (User user :
-                selectedUsers) {
-            roomIds.add(user.uid);
-        }
-        ChatRoomsDBM.getInstance(mContext).unmuteRooms(roomIds);
-        if (mUserListingRecyclerAdapter != null) {
-            mUserListingRecyclerAdapter.notifyDataSetChanged();
         }
     }
 }

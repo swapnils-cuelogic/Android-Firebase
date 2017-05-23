@@ -4,16 +4,17 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.listeners.GroupActionListener;
 import com.cuelogic.firebase.chat.models.Room;
 import com.cuelogic.firebase.chat.models.RoomWithTokens;
 import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.ui.adapters.UserListingRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,13 +27,15 @@ import java.util.List;
  */
 
 public class CreateGroupDialog extends Dialog implements View.OnClickListener {
+    private Context mContext;
     private List<User> groupMembers;
     private EditText editTextGroupName;
-    private TextView textViewGroupMembers;
+    private RecyclerView rvGroupMembers;
     private GroupActionListener groupActionListener;
 
     public CreateGroupDialog(@NonNull Context context, List<User> users) {
         super(context);
+        mContext = context;
         groupMembers = users;
         groupActionListener = (GroupActionListener)context;
     }
@@ -50,7 +53,9 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
     }
 
     private void setGroupMembersInfo() {
-        StringBuilder membersBuilder = new StringBuilder();
+        groupMembers.get(groupMembers.size()-1).displayName = "You";
+        rvGroupMembers.setAdapter(new UserListingRecyclerAdapter(mContext, groupMembers));
+        /*StringBuilder membersBuilder = new StringBuilder();
         int count = 0;
         for (User member:
              groupMembers) {
@@ -60,12 +65,12 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
                 membersBuilder.append(++count).append(". ").append(member.displayName).append("\n");
             }
         }
-        textViewGroupMembers.setText(membersBuilder.toString());
+        textViewGroupMembers.setText(membersBuilder.toString());*/
     }
 
     private void initUiElements() {
         editTextGroupName = (EditText)findViewById(R.id.editTextGroupName);
-        textViewGroupMembers = (TextView)findViewById(R.id.textViewGroupMembers);
+        rvGroupMembers = (RecyclerView)findViewById(R.id.rvGroupMembers);
 
         findViewById(R.id.buttonCreate).setOnClickListener(this);
         findViewById(R.id.buttonCancel).setOnClickListener(this);
