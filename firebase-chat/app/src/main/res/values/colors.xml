@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#0071bb</color>
     <color name="colorPrimaryDark">#0f5fb1</color>
-    <color name="colorAccent">#61C46E</color>
+    <color name="colorAccent">#029046</color>
 
     <color name="chatBubbleMe">#a0d9ff</color>
     <color name="chatTextMe">#424242</color>

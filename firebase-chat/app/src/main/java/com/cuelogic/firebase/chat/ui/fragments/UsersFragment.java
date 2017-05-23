@@ -1,9 +1,5 @@
 package com.cuelogic.firebase.chat.ui.fragments;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,6 +8,9 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -21,12 +20,11 @@ import com.cuelogic.firebase.chat.core.users.get.all.GetUsersPresenter;
 import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.listeners.Callback;
 import com.cuelogic.firebase.chat.listeners.UsersToolbarActionModeCallback;
-import com.cuelogic.firebase.chat.models.Group;
-import com.cuelogic.firebase.chat.models.GroupWithTokens;
+import com.cuelogic.firebase.chat.models.Room;
+import com.cuelogic.firebase.chat.models.RoomWithTokens;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.ui.activities.ChatActivity;
-import com.cuelogic.firebase.chat.ui.activities.GroupChatActivity;
-import com.cuelogic.firebase.chat.ui.activities.UserListingActivity;
+import com.cuelogic.firebase.chat.ui.activities.DashboardActivity;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingRecyclerAdapter;
 import com.cuelogic.firebase.chat.ui.dialogs.CreateGroupDialog;
 import com.cuelogic.firebase.chat.utils.Constants;
@@ -38,11 +36,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-public class UsersFragment extends BaseFragment implements GetUsersContract.View, ItemClickSupport.OnItemClickListener, ItemClickSupport.OnItemLongClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class UsersFragment extends BaseFragment implements GetUsersContract.View, ItemClickSupport.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
     public static final String ARG_TYPE = "type";
     public static final String TYPE_CHATS = "type_chats";
     public static final String TYPE_ALL = "type_all";
@@ -103,6 +99,28 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
     }
 */
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_users_action, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_create_group :
+                showActionMode();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -134,8 +152,8 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
 
         ItemClickSupport.addTo(mRecyclerViewAllUserListing)
                 .setOnItemClickListener(this);
-        ItemClickSupport.addTo(mRecyclerViewAllUserListing)
-                .setOnItemLongClickListener(this);
+        /*ItemClickSupport.addTo(mRecyclerViewAllUserListing)
+                .setOnItemLongClickListener(this);*/
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
     }
@@ -194,7 +212,7 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
 
     @Override
     public void onGetUserFailure(String message) {
-        showToastShort("Unable to create group");
+        showToastShort("Unable to create room");
     }
 
     @Override
@@ -229,8 +247,8 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
                                 FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(roomId).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        Group group = dataSnapshot.getValue(Group.class);
-                                        GroupChatActivity.startActivity(mContext, group, user.uid);
+                                        Room room = dataSnapshot.getValue(Room.class);
+                                        ChatActivity.startActivity(mContext, room, user.uid);
                                     }
 
                                     @Override
@@ -247,13 +265,13 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
                                 users.add(user.uid);
                                 tokens.add(currentUser.firebaseToken);
                                 tokens.add(user.firebaseToken);
-                                final Group group = new Group(roomId, Constants.TYPE_INDIVIDUAL, null, createdTime, currentUser.uid, createdTime, users);
-                                ((UserListingActivity) getActivity()).onCreateGroupRequest(
-                                        new GroupWithTokens(group, tokens),
+                                final Room room = new Room(roomId, Constants.TYPE_INDIVIDUAL, null, createdTime, currentUser.uid, createdTime, users);
+                                ((DashboardActivity) getActivity()).onCreateGroupRequest(
+                                        new RoomWithTokens(room, tokens),
                                         new Callback() {
                                             @Override
                                             public void onSuccess() {
-                                                GroupChatActivity.startActivity(mContext, group, user.uid);
+                                                ChatActivity.startActivity(mContext, room, user.uid);
                                             }
 
                                             @Override
@@ -272,24 +290,37 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
         }
     }
 
-    @Override
+    /*@Override
     public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
         onListItemSelect(position);
         return true;
+    }*/
+
+    private void showActionMode() {
+        if (mActionMode == null)
+            mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new UsersToolbarActionModeCallback(getActivity(), mUserListingRecyclerAdapter, mUserListingRecyclerAdapter.getUsers()));
+
+        if (mActionMode != null) {
+            mActionMode.setTitle(String.valueOf(mUserListingRecyclerAdapter
+                    .getSelectedCount()) + " selected");
+            mSwipeRefreshLayout.setEnabled(false);
+        } else {
+            mSwipeRefreshLayout.setEnabled(true);
+        }
     }
 
     //List item select method
     private void onListItemSelect(int position) {
         mUserListingRecyclerAdapter.toggleSelection(position);//Toggle the selection
 
-        boolean hasCheckedItems = mUserListingRecyclerAdapter.getSelectedCount() > 0;//Check if any items are already selected or not
+        //boolean hasCheckedItems = mUserListingRecyclerAdapter.getSelectedCount() > 0;//Check if any items are already selected or not
 
-        if (hasCheckedItems && mActionMode == null)
+        if (mActionMode == null)
             // there are some selected items, start the actionMode
             mActionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(new UsersToolbarActionModeCallback(getActivity(), mUserListingRecyclerAdapter, mUserListingRecyclerAdapter.getUsers()));
-        else if (!hasCheckedItems && mActionMode != null)
+        //else if (mActionMode != null)
             // there no selected items, finish the actionMode
-            mActionMode.finish();
+            //mActionMode.finish();
 
         if (mActionMode != null) {
             //set action mode title on item selection
@@ -311,9 +342,13 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
 
     //Set action mode null after use
     public void createGroupOfUsers(List<User> selectedUsers) {
-        this.selectedUsers = selectedUsers;
-        selectedUsers.add(currentUser);
-        new CreateGroupDialog(getActivity(), selectedUsers).show();
+        if(selectedUsers.size() > 0) {
+            this.selectedUsers = selectedUsers;
+            selectedUsers.add(currentUser);
+            new CreateGroupDialog(getActivity(), selectedUsers).show();
+        } else {
+            showToastShort(getString(R.string.no_users_to_create_group));
+        }
     }
 
     public void muteNotifications(List<User> selectedUsers) {
@@ -322,7 +357,7 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
                 selectedUsers) {
             roomIds.add(user.uid);
         }
-        ChatRoomsDBM.getInstance(mContext).muteRoom(roomIds);
+        ChatRoomsDBM.getInstance(mContext).muteRooms(roomIds);
         if (mUserListingRecyclerAdapter != null) {
             mUserListingRecyclerAdapter.notifyDataSetChanged();
         }
@@ -334,7 +369,7 @@ public class UsersFragment extends BaseFragment implements GetUsersContract.View
                 selectedUsers) {
             roomIds.add(user.uid);
         }
-        ChatRoomsDBM.getInstance(mContext).unmuteRoom(roomIds);
+        ChatRoomsDBM.getInstance(mContext).unmuteRooms(roomIds);
         if (mUserListingRecyclerAdapter != null) {
             mUserListingRecyclerAdapter.notifyDataSetChanged();
         }

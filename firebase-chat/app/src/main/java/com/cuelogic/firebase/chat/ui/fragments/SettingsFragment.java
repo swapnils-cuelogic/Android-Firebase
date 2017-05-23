@@ -15,7 +15,7 @@ import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersContract;
 import com.cuelogic.firebase.chat.core.users.get.all.GetUsersPresenter;
 import com.cuelogic.firebase.chat.models.User;
-import com.cuelogic.firebase.chat.ui.activities.UserListingActivity;
+import com.cuelogic.firebase.chat.ui.activities.DashboardActivity;
 import com.cuelogic.firebase.chat.utils.SharedPrefUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
@@ -98,7 +98,7 @@ public class SettingsFragment extends BaseFragment implements GetUsersContract.V
     }
 
     private void onLogout(View view) {
-        ((UserListingActivity)getActivity()).logout();
+        ((DashboardActivity)getActivity()).logout();
     }
 
     @Override

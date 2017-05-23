@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.listeners.GroupActionListener;
-import com.cuelogic.firebase.chat.models.Group;
-import com.cuelogic.firebase.chat.models.GroupWithTokens;
+import com.cuelogic.firebase.chat.models.Room;
+import com.cuelogic.firebase.chat.models.RoomWithTokens;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
@@ -76,8 +76,8 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.buttonCreate :
                 if(isValidGroupInfo()) {
-                    GroupWithTokens groupWithTokens = createGropInfo();
-                    groupActionListener.onCreateGroupRequest(groupWithTokens, null);
+                    RoomWithTokens roomWithTokens = createGropInfo();
+                    groupActionListener.onCreateGroupRequest(roomWithTokens, null);
                     dismiss();
                 }
                 break;
@@ -90,14 +90,14 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
 
     private boolean isValidGroupInfo() {
         if("".equals(editTextGroupName.getText().toString().trim())) {
-            editTextGroupName.setError("Please enter group name");
+            editTextGroupName.setError("Please enter room name");
         } else {
             editTextGroupName.setError(null);
         }
         return editTextGroupName.getError() == null;
     }
 
-    private GroupWithTokens createGropInfo() {
+    private RoomWithTokens createGropInfo() {
         String createdBy = FirebaseAuth.getInstance().getCurrentUser().getUid();
         long createdTime = System.currentTimeMillis();
         String roomId = FirebaseDatabase.getInstance().getReference().push().getKey();
@@ -109,6 +109,6 @@ public class CreateGroupDialog extends Dialog implements View.OnClickListener {
             users.add(member.uid);
             tokens.add(member.firebaseToken);
         }
-        return new GroupWithTokens(new Group(roomId, Constants.TYPE_GROUP, displayName, createdTime, createdBy, createdTime, users), tokens);
+        return new RoomWithTokens(new Room(roomId, Constants.TYPE_GROUP, displayName, createdTime, createdBy, createdTime, users), tokens);
     }
 }

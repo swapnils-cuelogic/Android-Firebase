@@ -12,79 +12,55 @@ import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
-import com.cuelogic.firebase.chat.models.Group;
+import com.cuelogic.firebase.chat.models.Room;
 import com.cuelogic.firebase.chat.models.RoomDetails;
-import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.StringUtils;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class GroupListingRecyclerAdapter extends RecyclerView.Adapter<GroupListingRecyclerAdapter.ViewHolder> {
+public class ChatsListingRecyclerAdapter extends RecyclerView.Adapter<ChatsListingRecyclerAdapter.ViewHolder> {
     private Context mContext;
-    private List<Group> mGroups;
+    private List<Room> mRooms;
     private SparseBooleanArray mSelectedItemsIds;
 
-    public GroupListingRecyclerAdapter(Context context, List<Group> groups) {
+    public ChatsListingRecyclerAdapter(Context context, List<Room> rooms) {
         this.mContext = context;
-        this.mGroups = groups;
+        this.mRooms = rooms;
         mSelectedItemsIds = new SparseBooleanArray();
     }
 
-    public void add(Group group) {
-        mGroups.add(group);
-        notifyItemInserted(mGroups.size() - 1);
+    public void add(Room room) {
+        mRooms.add(room);
+        notifyItemInserted(mRooms.size() - 1);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_group_listing, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_chat_listing, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Group group = mGroups.get(position);
+        Room room = mRooms.get(position);
         try {
             //String alphabet = user.email.substring(0, 1);
             /** Change background color of the selected items in list view  **/
             holder.itemView.setBackgroundColor(mSelectedItemsIds.get(position) ? 0x9934B5E4 : Color.TRANSPARENT);
 
-            final RoomDetails roomDetails = ChatRoomsDBM.getInstance(mContext).getRoomDetails(group.roomId);
+            final RoomDetails roomDetails = ChatRoomsDBM.getInstance(mContext).getRoomDetails(room.roomId);
+            holder.txtGroupName.setText(room.displayName);
 
-            if(group.type == Constants.TYPE_GROUP) {
-                holder.txtGroupName.setText(group.displayName);
+            if(room.type == Constants.TYPE_GROUP) {
                 holder.groupImage.setImageResource(R.drawable.ic_group_white_24dp);
-                holder.txtMembers.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : group.users.size() + " Members");
+                holder.txtMembers.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : room.users.size() + " Members");
             } else {
-                String selfId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                for (String uid:
-                        group.users) {
-                    if(!selfId.equals(uid)) {
-                        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(uid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                User user = dataSnapshot.getValue(User.class);
-                                holder.txtGroupName.setText(user.displayName);
-                                Picasso.with(mContext).load(user.photoUrl).into(holder.groupImage);
-                                holder.txtMembers.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : user.email);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
-                        break;
-                    }
-                }
+                Picasso.with(mContext).load(room.photoUrl).into(holder.groupImage);
+                holder.txtMembers.setText(StringUtils.isNotEmptyNotNull(roomDetails.lastMessage) ? roomDetails.lastMessage : room.email);
             }
 
             holder.txtLastMessageTime.setText(roomDetails.lastMessageTime);
@@ -108,18 +84,18 @@ public class GroupListingRecyclerAdapter extends RecyclerView.Adapter<GroupListi
 
     @Override
     public int getItemCount() {
-        if (mGroups != null) {
-            return mGroups.size();
+        if (mRooms != null) {
+            return mRooms.size();
         }
         return 0;
     }
 
-    public Group getGroup(int position) {
-        return mGroups.get(position);
+    public Room getRoom(int position) {
+        return mRooms.get(position);
     }
 
-    public List<Group> getGroups() {
-        return mGroups;
+    public List<Room> getGroups() {
+        return mRooms;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

@@ -1,19 +1,20 @@
 package com.cuelogic.firebase.chat.core.chat;
 
 import android.content.Context;
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import com.cuelogic.firebase.chat.fcm.FcmNotificationBuilder;
-import com.cuelogic.firebase.chat.models.Chat;
+import com.cuelogic.firebase.chat.models.RoomChat;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.Logger;
-import com.cuelogic.firebase.chat.utils.SharedPrefUtil;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
 
 public class ChatInteractor implements ChatContract.Interactor {
     private static final String TAG = "ChatInteractor";
@@ -39,131 +40,61 @@ public class ChatInteractor implements ChatContract.Interactor {
     }
 
     @Override
-    public void sendMessageToFirebaseUser(final Context context, final Chat chat, final String receiverFirebaseToken) {
-        Logger.vLog(TAG, "sendMessageToFirebaseUser()", true);
-        final String room_type_1 = chat.senderUid + "_" + chat.receiverUid;
-        final String room_type_2 = chat.receiverUid + "_" + chat.senderUid;
+    public void sendMessageToFirebaseUser(final Context context, final RoomChat newChat, final String title) {
+        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).keepSynced(true);
 
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child(Constants.ARG_CHAT_ROOMS).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+        String messageId = FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).push().getKey();
+
+        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(newChat.roomId).child(messageId).setValue(newChat).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(room_type_1)) {
-                    Logger.vLog(TAG, "sendMessageToFirebaseUser: " + room_type_1 + " exists");
-                    databaseReference.child(Constants.ARG_CHAT_ROOMS).child(room_type_1).child(String.valueOf(chat.timestamp)).setValue(chat);
-                } else if (dataSnapshot.hasChild(room_type_2)) {
-                    Logger.vLog(TAG, "sendMessageToFirebaseUser: " + room_type_2 + " exists");
-                    databaseReference.child(Constants.ARG_CHAT_ROOMS).child(room_type_2).child(String.valueOf(chat.timestamp)).setValue(chat);
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()) {
+
+                    sendPushNotificationToReceivers(title, newChat.senderUid, newChat.roomId, newChat.message, newChat.timestamp);
+
+                    HashMap<String, Object> result = new HashMap<>();
+                    result.put("lastUpdatedTime", newChat.timestamp);
+                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS).child(newChat.roomId).keepSynced(true);
+                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_ROOMS)
+                            .child(newChat.roomId)
+                            .updateChildren(result);
+                    mOnSendMessageListener.onSendMessageSuccess();
                 } else {
-                    Logger.vLog(TAG, "sendMessageToFirebaseUser: success");
-                    databaseReference.child(Constants.ARG_CHAT_ROOMS).child(room_type_1).child(String.valueOf(chat.timestamp)).setValue(chat);
-                    getMessageFromFirebaseUser(chat.senderUid, chat.receiverUid);
+                    mOnSendMessageListener.onSendMessageFailure("Unable to send message: ");
                 }
-
-                // send push notification to the receiver
-                sendPushNotificationToReceiver(chat.displayName, chat.sender, chat.message, chat.senderUid, chat.timestamp,
-                        SharedPrefUtil.getFirebaseToken(context), receiverFirebaseToken);
-                mOnSendMessageListener.onSendMessageSuccess();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                mOnSendMessageListener.onSendMessageFailure("Unable to send message: " + databaseError.getMessage());
             }
         });
     }
 
-    private void sendPushNotificationToReceiver(String displayName, String username, String message, String uid,
-                                                long timestamp, String firebaseToken, String receiverFirebaseToken) {
-        Logger.vLog(TAG, "sendPushNotificationToReceiver()", true);
+    private void sendPushNotificationToReceivers(String title, String uid, String roomId, String message, long timestamp) {
         FcmNotificationBuilder.initialize()
-                .title(displayName).message(message)
-                .username(username).uid(uid).timeStamp(timestamp)
-                .firebaseToken(firebaseToken).receiverFirebaseToken(receiverFirebaseToken)
+                .title(title).message(message)
+                .uid(uid).roomId(roomId).timeStamp(timestamp)
                 .send();
     }
 
     @Override
-    public void getMessageFromFirebaseUser(String senderUid, String receiverUid) {
-        Logger.vLog(TAG, "getMessageFromFirebaseUser()", true);
-        final String room_type_1 = senderUid + "_" + receiverUid;
-        final String room_type_2 = receiverUid + "_" + senderUid;
-
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        databaseReference.child(Constants.ARG_CHAT_ROOMS).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+    public void getMessageFromFirebaseUser(String roomId) {
+        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES).child(roomId).getRef().addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild(room_type_1)) {
-                    Logger.vLog(TAG, "getMessageFromFirebaseUser: " + room_type_1 + " exists", true);
-                    FirebaseDatabase.getInstance()
-                            .getReference().child(Constants.ARG_CHAT_ROOMS)
-                            .child(room_type_1).addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String string) {
-                            Logger.vLog(TAG, "getMessageFromFirebaseUser: onChildAdded: " + string, true);
-                            Chat chat = dataSnapshot.getValue(Chat.class);
-                            mOnGetMessagesListener.onGetMessagesSuccess(chat);
-                        }
+            public void onChildAdded(DataSnapshot dataSnapshot, String string) {
+                RoomChat newChat = dataSnapshot.getValue(RoomChat.class);
+                mOnGetMessagesListener.onGetMessagesSuccess(newChat);
+            }
 
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                        }
+            }
 
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                        }
+            }
 
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            mOnGetMessagesListener.onGetMessagesFailure("Unable to get message: " + databaseError.getMessage());
-                            Logger.vLog(TAG, "getMessageFromFirebaseUser: onCancelled", true);
-                        }
-                    });
-                } else if (dataSnapshot.hasChild(room_type_2)) {
-                    Logger.vLog(TAG, "getMessageFromFirebaseUser: " + room_type_2 + " exists", true);
-                    FirebaseDatabase.getInstance()
-                            .getReference()
-                            .child(Constants.ARG_CHAT_ROOMS)
-                            .child(room_type_2).addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                            Logger.vLog(TAG, "getMessageFromFirebaseUser: onChildAdded", true);
-                            Chat chat = dataSnapshot.getValue(Chat.class);
-                            mOnGetMessagesListener.onGetMessagesSuccess(chat);
-                        }
-
-                        @Override
-                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            mOnGetMessagesListener.onGetMessagesFailure("Unable to get message: " + databaseError.getMessage());
-                            Logger.vLog(TAG, "getMessageFromFirebaseUser: onCancelled", true);
-                        }
-                    });
-                } else {
-                    Log.e(TAG, "getMessageFromFirebaseUser: no such room available");
-                }
             }
 
             @Override
@@ -175,14 +106,8 @@ public class ChatInteractor implements ChatContract.Interactor {
     }
 
     @Override
-    public void syncMessageFromFirebaseUser(String senderUid, String receiverUid) {
-        String room_type_1 = senderUid + "_" + receiverUid;
-        String room_type_2 = receiverUid + "_" + senderUid;
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-        databaseReference.child(Constants.ARG_CHAT_ROOMS)
-                .child(room_type_1).getRef().keepSynced(true);
-        databaseReference.child(Constants.ARG_CHAT_ROOMS)
-                .child(room_type_2).getRef().keepSynced(true);
+    public void syncMessageFromFirebaseUser(String roomId) {
+        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_MESSAGES)
+                .child(roomId).getRef().keepSynced(true);
     }
 }

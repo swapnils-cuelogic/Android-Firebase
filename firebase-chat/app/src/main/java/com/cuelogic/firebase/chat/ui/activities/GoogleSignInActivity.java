@@ -243,7 +243,7 @@ public class GoogleSignInActivity extends BaseActivity {
                         if (task.isSuccessful()) {
                             mProgressDialog.dismiss();
                             showToastShort(getString(R.string.logged_in_successfully));
-                            UserListingActivity.startActivity(GoogleSignInActivity.this, Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            DashboardActivity.startActivity(GoogleSignInActivity.this, Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         } else {
                             mProgressDialog.dismiss();
                             showAlertMessage(task.getException().getMessage());

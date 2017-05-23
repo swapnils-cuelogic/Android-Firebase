@@ -7,12 +7,9 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
-import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
-import com.cuelogic.firebase.chat.models.RoomDetails;
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.utils.StringUtils;
 import com.squareup.picasso.Picasso;

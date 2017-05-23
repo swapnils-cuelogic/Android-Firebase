@@ -49,11 +49,11 @@ public class ChatRoomsDBM extends DatabaseManager {
                 + IS_MUTED + " INTEGER DEFAULT 0);";
     }
 
-    public void muteRoom(List<String> roomIds) {
+    public void muteRooms(List<String> roomIds) {
         updateMute(roomIds, true);
     }
 
-    public void unmuteRoom(List<String> roomIds) {
+    public void unmuteRooms(List<String> roomIds) {
         updateMute(roomIds, false);
     }
 
@@ -77,6 +77,38 @@ public class ChatRoomsDBM extends DatabaseManager {
                 }
                 cur.close();
             }
+            db.close();
+        } catch(SQLException se){
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void muteRoom(String roomId) {
+        updateMute(roomId, true);
+    }
+
+    public void unmuteRoom(String roomId) {
+        updateMute(roomId, false);
+    }
+
+    private void updateMute(String roomId, boolean isMuted) {
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(_ChatRooms.ROOM_ID, roomId);
+            values.put(_ChatRooms.IS_MUTED, isMuted ? 1 : 0);
+
+            Cursor cur = db.query(_ChatRooms.TABLE, null,
+                    _ChatRooms.ROOM_ID + " = ?", new String[] { roomId },
+                    null, null, null);
+            if (cur.moveToFirst()) {
+                db.update(_ChatRooms.TABLE, values, _ChatRooms.ROOM_ID + " = ?", new String[] { roomId });
+            } else {
+                db.insert(_ChatRooms.TABLE, null, values);
+            }
+            cur.close();
             db.close();
         } catch(SQLException se){
             se.printStackTrace();

@@ -11,7 +11,7 @@ import android.view.MenuItem;
 
 import com.cuelogic.firebase.chat.R;
 import com.cuelogic.firebase.chat.models.User;
-import com.cuelogic.firebase.chat.ui.activities.UserListingActivity;
+import com.cuelogic.firebase.chat.ui.activities.DashboardActivity;
 import com.cuelogic.firebase.chat.ui.adapters.UserListingRecyclerAdapter;
 import com.cuelogic.firebase.chat.ui.fragments.UsersFragment;
 import com.cuelogic.firebase.chat.utils.Logger;
@@ -37,7 +37,7 @@ public class UsersToolbarActionModeCallback implements ActionMode.Callback {
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        mode.getMenuInflater().inflate(R.menu.menu_users_action, menu);//Inflate the menu over action mode
+        mode.getMenuInflater().inflate(R.menu.menu_users_action_selection, menu);//Inflate the menu over action mode
         return true;
     }
 
@@ -47,9 +47,9 @@ public class UsersToolbarActionModeCallback implements ActionMode.Callback {
         //Sometimes the meu will not be visible so for that we need to set their visibility manually in this method
         //So here show action menu according to SDK Levels
         if (Build.VERSION.SDK_INT < 11) {
-            MenuItemCompat.setShowAsAction(menu.findItem(R.id.action_create_group), MenuItemCompat.SHOW_AS_ACTION_NEVER);
+            MenuItemCompat.setShowAsAction(menu.findItem(R.id.action_done_create_group), MenuItemCompat.SHOW_AS_ACTION_NEVER);
         } else {
-            menu.findItem(R.id.action_create_group).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.findItem(R.id.action_done_create_group).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         }
 
         return true;
@@ -77,22 +77,22 @@ public class UsersToolbarActionModeCallback implements ActionMode.Callback {
         }
         mode.finish();//Finish action mode
 
-        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(1);//Get recycler view fragment
+        Fragment recyclerFragment = ((DashboardActivity)mContext).getFragment(1);//Get recycler view fragment
 
         switch (item.getItemId()) {
-            case R.id.action_create_group:
+            case R.id.action_done_create_group:
                 if (recyclerFragment != null)
                     //If recycler fragment not null
                     ((UsersFragment) recyclerFragment).createGroupOfUsers(selectedUsers);
                 break;
-            case R.id.action_mute_notifications:
+            /*case R.id.action_mute_notifications:
                 if (recyclerFragment != null)
                     ((UsersFragment) recyclerFragment).muteNotifications(selectedUsers);
                 break;
             case R.id.action_unmute_notifications:
                 if (recyclerFragment != null)
                     ((UsersFragment) recyclerFragment).unmuteNotifications(selectedUsers);
-                break;
+                break;*/
         }
         return false;
     }
@@ -103,7 +103,7 @@ public class UsersToolbarActionModeCallback implements ActionMode.Callback {
         //When action mode destroyed remove selected selections and set action mode to null
         //First check current fragment action mode
         userListingRecyclerAdapter.removeSelection();  // remove selection
-        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(1);//Get recycler fragment
+        Fragment recyclerFragment = ((DashboardActivity)mContext).getFragment(1);//Get recycler fragment
         if (recyclerFragment != null)
             ((UsersFragment) recyclerFragment).setNullToActionMode();//Set action mode null
     }

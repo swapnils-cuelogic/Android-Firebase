@@ -2,8 +2,10 @@ package com.cuelogic.firebase.chat.models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import java.util.List;
+
 import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.util.List;
 
 @IgnoreExtraProperties
 public class User implements Parcelable {

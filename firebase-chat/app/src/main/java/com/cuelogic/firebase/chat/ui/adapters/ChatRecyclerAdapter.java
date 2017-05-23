@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.R;
-import com.cuelogic.firebase.chat.models.Chat;
+import com.cuelogic.firebase.chat.models.RoomChat;
 import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.StringUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
@@ -25,21 +26,22 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context mContext;
-    private Map<String, User> mapUidUser = new HashMap<>();
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_OTHER = 2;
+    private Map<String, User> mapUidUser = new HashMap<>();
+    private List<RoomChat> mChats;
+    private int roomType;
     private static String TIME_FORMAT = "d/M/yyyy h:mm a";
     private SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT);
 
-    private List<Chat> mChats;
-
-    public ChatRecyclerAdapter(Context context, List<Chat> chats, Map<String, User> mapUidUser) {
+    public ChatRecyclerAdapter(Context context, int roomType, List<RoomChat> chats, Map<String, User> mapUidUser) {
         this.mContext = context;
         this.mChats = chats;
+        this.roomType = roomType;
         this.mapUidUser = mapUidUser;
     }
 
-    public void add(Chat chat) {
+    public void add(RoomChat chat) {
         mChats.add(chat);
         notifyItemInserted(mChats.size() - 1);
     }
@@ -72,7 +74,7 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void configureMyChatViewHolder(MyChatViewHolder myChatViewHolder, int position) {
-        Chat chat = mChats.get(position);
+        RoomChat chat = mChats.get(position);
         try {
             myChatViewHolder.txtTimestamp.setText(sdfTime.format(new Date(chat.timestamp)));
         }catch (Exception e) {
@@ -89,7 +91,7 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private void configureOtherChatViewHolder(OtherChatViewHolder otherChatViewHolder, int position) {
-        Chat chat = mChats.get(position);
+        RoomChat chat = mChats.get(position);
         try {
             otherChatViewHolder.txtTimestamp.setText(sdfTime.format(new Date(chat.timestamp)));
         }catch (Exception e) {
@@ -102,7 +104,12 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         } else {
             otherChatViewHolder.imgUserPhoto.setImageResource(R.drawable.ic_user_white_24dp);
         }
-        otherChatViewHolder.txtUserName.setVisibility(View.GONE);
+        if(user != null && roomType == Constants.TYPE_GROUP && StringUtils.isNotEmptyNotNull(user.displayName)) {
+            otherChatViewHolder.txtUserName.setText(user.displayName);
+            otherChatViewHolder.txtUserName.setVisibility(View.VISIBLE);
+        } else {
+            otherChatViewHolder.txtUserName.setVisibility(View.GONE);
+        }
         otherChatViewHolder.txtChatMessage.setText(chat.message);
     }
 

@@ -2,7 +2,7 @@ package com.cuelogic.firebase.chat.core.chat;
 
 import android.content.Context;
 
-import com.cuelogic.firebase.chat.models.Chat;
+import com.cuelogic.firebase.chat.models.RoomChat;
 
 public class ChatPresenter implements ChatContract.Presenter, ChatContract.OnSendMessageListener,
         ChatContract.OnGetMessagesListener {
@@ -15,18 +15,18 @@ public class ChatPresenter implements ChatContract.Presenter, ChatContract.OnSen
     }
 
     @Override
-    public void sendMessage(Context context, Chat chat, String receiverFirebaseToken) {
-        mChatInteractor.sendMessageToFirebaseUser(context, chat, receiverFirebaseToken);
+    public void sendMessage(Context context, RoomChat newChat, String title) {
+        mChatInteractor.sendMessageToFirebaseUser(context, newChat, title);
     }
 
     @Override
-    public void getMessage(String senderUid, String receiverUid) {
-        mChatInteractor.getMessageFromFirebaseUser(senderUid, receiverUid);
+    public void getMessage(String roomId) {
+        mChatInteractor.getMessageFromFirebaseUser(roomId);
     }
 
     @Override
-    public void syncMessage(String senderUid, String receiverUid) {
-        mChatInteractor.syncMessageFromFirebaseUser(senderUid, receiverUid);
+    public void syncMessage(String roomId) {
+        mChatInteractor.syncMessageFromFirebaseUser(roomId);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class ChatPresenter implements ChatContract.Presenter, ChatContract.OnSen
     }
 
     @Override
-    public void onGetMessagesSuccess(Chat chat) {
-        mView.onGetMessagesSuccess(chat);
+    public void onGetMessagesSuccess(RoomChat newChat) {
+        mView.onGetMessagesSuccess(newChat);
     }
 
     @Override

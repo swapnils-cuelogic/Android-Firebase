@@ -2,7 +2,7 @@ package com.cuelogic.firebase.chat.core.chat;
 
 import android.content.Context;
 
-import com.cuelogic.firebase.chat.models.Chat;
+import com.cuelogic.firebase.chat.models.RoomChat;
 
 public interface ChatContract {
     interface View {
@@ -10,25 +10,25 @@ public interface ChatContract {
 
         void onSendMessageFailure(String message);
 
-        void onGetMessagesSuccess(Chat chat);
+        void onGetMessagesSuccess(RoomChat newChat);
 
         void onGetMessagesFailure(String message);
     }
 
     interface Presenter {
-        void sendMessage(Context context, Chat chat, String receiverFirebaseToken);
+        void sendMessage(Context context, RoomChat newChat, String title);
 
-        void getMessage(String senderUid, String receiverUid);
+        void getMessage(String roomId);
 
-        void syncMessage(String senderUid, String receiverUid);
+        void syncMessage(String roomId);
     }
 
     interface Interactor {
-        void sendMessageToFirebaseUser(Context context, Chat chat, String receiverFirebaseToken);
+        void sendMessageToFirebaseUser(Context context, RoomChat newChat, String title);
 
-        void getMessageFromFirebaseUser(String senderUid, String receiverUid);
+        void getMessageFromFirebaseUser(String roomId);
 
-        void syncMessageFromFirebaseUser(String senderUid, String receiverUid);
+        void syncMessageFromFirebaseUser(String roomId);
     }
 
     interface OnSendMessageListener {
@@ -38,7 +38,7 @@ public interface ChatContract {
     }
 
     interface OnGetMessagesListener {
-        void onGetMessagesSuccess(Chat chat);
+        void onGetMessagesSuccess(RoomChat newChat);
 
         void onGetMessagesFailure(String message);
     }

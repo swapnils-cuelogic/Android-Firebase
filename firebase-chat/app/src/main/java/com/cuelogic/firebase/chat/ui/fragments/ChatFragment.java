@@ -16,8 +16,10 @@ import com.cuelogic.firebase.chat.core.chat.ChatContract;
 import com.cuelogic.firebase.chat.core.chat.ChatPresenter;
 import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.events.PushNotificationEvent;
-import com.cuelogic.firebase.chat.models.Chat;
+import com.cuelogic.firebase.chat.models.Room;
+import com.cuelogic.firebase.chat.models.RoomChat;
 import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.ui.activities.ChatActivity;
 import com.cuelogic.firebase.chat.ui.adapters.ChatRecyclerAdapter;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.StringUtils;
@@ -35,8 +37,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ChatFragment extends BaseFragment implements ChatContract.View, View.OnClickListener {
-    private User user;
+    private Room room;
     private Map<String, User> mapUidUser = new HashMap<>();
+
     private RecyclerView mRecyclerViewChat;
     private EditText mETxtMessage;
 
@@ -47,9 +50,9 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Vie
     private ChatPresenter mChatPresenter;
     private ImageView imgSendMessage;
 
-    public static ChatFragment newInstance(User user) {
+    public static ChatFragment newInstance(Room room) {
         Bundle args = new Bundle();
-        args.putParcelable(Constants.ARG_USER, user);
+        args.putParcelable(Constants.ARG_GROUP, room);
         ChatFragment fragment = new ChatFragment();
         fragment.setArguments(args);
         return fragment;
@@ -88,11 +91,14 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Vie
     }
 
     private void init() {
-        user = getArguments().getParcelable(Constants.ARG_USER);
-        putChatUsersInMap();
+        room = getArguments().getParcelable(Constants.ARG_GROUP);
 
-        ChatRoomsDBM.getInstance(mContext).clearCount(user.uid);
+        setChatTitle();
+
+        ChatRoomsDBM.getInstance(mContext).clearCount(room.roomId);
         getActivity().sendBroadcast(new Intent(Constants.ACTION_MESSAGE_RECEIVED));
+
+        setUpUsersMapAndPushTokens();
 
         mProgressDialog = new ProgressDialog(getActivity());
         mProgressDialog.setTitle(getString(R.string.loading));
@@ -103,37 +109,78 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Vie
         imgSendMessage.setOnClickListener(this);
 
         mChatPresenter = new ChatPresenter(this);
-        mChatPresenter.syncMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
-        mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(), user.uid);
+        mChatPresenter.syncMessage(room.roomId);
+        mChatPresenter.getMessage(room.roomId);
     }
 
-    private void putChatUsersInMap() {
-        mapUidUser.put(user.uid, user);
-        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                if (user != null) {
-                    mapUidUser.put(user.uid, user);
+    private void setChatTitle() {
+        if(room.type == Constants.TYPE_GROUP) {
+            // set toolbar title
+            ((ChatActivity)getActivity()).mToolbar.setTitle(room.displayName);
+            ((ChatActivity)getActivity()).mToolbar.setSubtitle(room.users.size()+" Members");
+        } else {
+            String selfId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            for (String uid:
+                    room.users) {
+                if(!selfId.equals(uid)) {
+                    FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(uid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            ((ChatActivity)getActivity()).mToolbar.setTitle(user.displayName);
+                            ((ChatActivity)getActivity()).mToolbar.setSubtitle(user.email);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                    break;
                 }
             }
+        }
+    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+    private void setUpUsersMapAndPushTokens() {
+        for (String uid :
+                room.users) {
+            FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(uid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user != null) {
+                        mapUidUser.put(user.uid, user);
+                    }
+                }
 
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.imgSendMessage:
+                sendMessage();
+                break;
+        }
     }
 
     private void sendMessage() {
         String message = mETxtMessage.getText().toString();
         if (StringUtils.isNotEmptyNotNull(message.trim())) {
-            String displayName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-            String sender = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            String title = room.displayName;
+            if(room.type == Constants.TYPE_INDIVIDUAL)
+                title = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+
             String senderUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            Chat chat = new Chat(sender, user.email, senderUid, user.uid, message, System.currentTimeMillis(), displayName);
-            mChatPresenter.sendMessage(getActivity().getApplicationContext(), chat, user.firebaseToken);
-            ChatRoomsDBM.getInstance(mContext).updateLastMessage(chat.receiverUid, chat.message, chat.timestamp);
+            RoomChat roomChat = new RoomChat(room.roomId, senderUid, message, System.currentTimeMillis());
+            mChatPresenter.sendMessage(getActivity().getApplicationContext(), roomChat, title);
+            ChatRoomsDBM.getInstance(mContext).updateLastMessage(roomChat.roomId, roomChat.message, roomChat.timestamp);
         }
     }
 
@@ -149,13 +196,13 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Vie
     }
 
     @Override
-    public void onGetMessagesSuccess(Chat chat) {
+    public void onGetMessagesSuccess(RoomChat newChat) {
         mProgressDialog.dismiss();
         if (mChatRecyclerAdapter == null) {
-            mChatRecyclerAdapter = new ChatRecyclerAdapter(mContext, new ArrayList<Chat>(), mapUidUser);
+            mChatRecyclerAdapter = new ChatRecyclerAdapter(mContext, room.type, new ArrayList<RoomChat>(), mapUidUser);
             mRecyclerViewChat.setAdapter(mChatRecyclerAdapter);
         }
-        mChatRecyclerAdapter.add(chat);
+        mChatRecyclerAdapter.add(newChat);
         mRecyclerViewChat.scrollToPosition(mChatRecyclerAdapter.getItemCount() - 1);
         //mRecyclerViewChat.smoothScrollToPosition(mChatRecyclerAdapter.getItemCount() - 1);
     }
@@ -167,17 +214,7 @@ public class ChatFragment extends BaseFragment implements ChatContract.View, Vie
     @Subscribe
     public void onPushNotificationEvent(PushNotificationEvent pushNotificationEvent) {
         if (mChatRecyclerAdapter == null || mChatRecyclerAdapter.getItemCount() == 0) {
-            mChatPresenter.getMessage(FirebaseAuth.getInstance().getCurrentUser().getUid(),
-                    pushNotificationEvent.getUid());
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.imgSendMessage:
-                sendMessage();
-                break;
+            mChatPresenter.getMessage(room.roomId);
         }
     }
 }

@@ -7,19 +7,19 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
-import com.cuelogic.firebase.chat.models.User;
+import com.cuelogic.firebase.chat.models.Room;
 import com.cuelogic.firebase.chat.ui.fragments.ChatFragment;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ChatActivity extends BaseActivity {
-    private User user;
+    private Room room;
 
     private static final String TAG = ChatActivity.class.getSimpleName();
 
-    public static void startActivity(Context context, User user) {
+    public static void startActivity(Context context, Room room, String uid) {
         Intent intent = new Intent(context, ChatActivity.class);
-        intent.putExtra(Constants.ARG_USER, user);
+        intent.putExtra(Constants.ARG_GROUP, room);
         context.startActivity(intent);
     }
 
@@ -31,19 +31,13 @@ public class ChatActivity extends BaseActivity {
     }
 
     private void init() {
-        user = getIntent().getParcelableExtra(Constants.ARG_USER);
+        room = getIntent().getParcelableExtra(Constants.ARG_GROUP);
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            if (user != null) {
-                // set toolbar title
-                mToolbar.setTitle(user.displayName != null ? user.displayName : user.email);
-
-                if (user.email != null) {
-                    mToolbar.setSubtitle(user.email);
-                }
+            if (room != null) {
                 enableBackButton();
                 // set the register screen fragment
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.frame_layout_content_chat, ChatFragment.newInstance(user), ChatFragment.class.getSimpleName());
+                fragmentTransaction.replace(R.id.frame_layout_content_chat, ChatFragment.newInstance(room), ChatFragment.class.getSimpleName());
                 fragmentTransaction.commit();
             } else {
                 onBackPressed();
@@ -59,7 +53,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if(isTaskRoot()) {
-            UserListingActivity.startActivity(this);
+            DashboardActivity.startActivity(this);
         }
         super.onBackPressed();
     }
@@ -67,7 +61,7 @@ public class ChatActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        FirebaseChatMainApp.setChatActivityOpen(true, user.uid);
+        FirebaseChatMainApp.setChatActivityOpen(true, room.roomId);
     }
 
     @Override

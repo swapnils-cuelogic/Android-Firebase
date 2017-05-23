@@ -9,8 +9,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
@@ -20,10 +18,9 @@ import com.cuelogic.firebase.chat.database.ChatRoomsDBM;
 import com.cuelogic.firebase.chat.fcm.FcmTopicBuilder;
 import com.cuelogic.firebase.chat.listeners.Callback;
 import com.cuelogic.firebase.chat.listeners.GroupActionListener;
-import com.cuelogic.firebase.chat.models.Group;
-import com.cuelogic.firebase.chat.models.GroupWithTokens;
-import com.cuelogic.firebase.chat.ui.adapters.UserListingPagerAdapter;
-import com.cuelogic.firebase.chat.ui.fragments.GroupsFragment;
+import com.cuelogic.firebase.chat.models.Room;
+import com.cuelogic.firebase.chat.models.RoomWithTokens;
+import com.cuelogic.firebase.chat.ui.adapters.DashboardPagerAdapter;
 import com.cuelogic.firebase.chat.ui.fragments.UsersFragment;
 import com.cuelogic.firebase.chat.utils.Constants;
 import com.google.android.gms.auth.api.Auth;
@@ -43,28 +40,28 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserListingActivity extends BaseActivity implements LogoutContract.View, GroupActionListener {
-    private TabLayout mTabLayoutUserListing;
-    private ViewPager mViewPagerUserListing;
+public class DashboardActivity extends BaseActivity implements LogoutContract.View, GroupActionListener {
+    private TabLayout mTabLayoutDashboard;
+    private ViewPager mViewPagerDashboard;
 
     private LogoutPresenter mLogoutPresenter;
     private GoogleApiClient mGoogleApiClient;
-    private UserListingPagerAdapter userListingPagerAdapter;
+    private DashboardPagerAdapter dashboardPagerAdapter;
 
     public static void startActivity(Context context) {
-        Intent intent = new Intent(context, UserListingActivity.class);
+        Intent intent = new Intent(context, DashboardActivity.class);
         context.startActivity(intent);
     }
 
     public static void startActivity(Context context, int flags) {
-        Intent intent = new Intent(context, UserListingActivity.class);
+        Intent intent = new Intent(context, DashboardActivity.class);
         intent.setFlags(flags);
         context.startActivity(intent);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setContentView(R.layout.activity_user_listing);
+        setContentView(R.layout.activity_dashboard);
         super.onCreate(savedInstanceState);
         init();
     }
@@ -88,13 +85,14 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        mTabLayoutUserListing = (TabLayout) findViewById(R.id.tab_layout_user_listing);
-        mViewPagerUserListing = (ViewPager) findViewById(R.id.view_pager_user_listing);
+        mTabLayoutDashboard = (TabLayout) findViewById(R.id.tab_layout_dashboard);
+        mViewPagerDashboard = (ViewPager) findViewById(R.id.view_pager_dashboard);
+        mViewPagerDashboard.setOffscreenPageLimit(2);
 
         // set the view pager adapter
-        userListingPagerAdapter = new UserListingPagerAdapter(getSupportFragmentManager());
-        mViewPagerUserListing.setAdapter(userListingPagerAdapter);
-        mViewPagerUserListing.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        dashboardPagerAdapter = new DashboardPagerAdapter(getSupportFragmentManager());
+        mViewPagerDashboard.setAdapter(dashboardPagerAdapter);
+        mViewPagerDashboard.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -107,11 +105,6 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                Fragment recyclerFragment0 = getFragment(0);//Get recycler fragment
-                if (recyclerFragment0 != null) {
-                    if(((GroupsFragment) recyclerFragment0).getActionMode() != null)
-                        ((GroupsFragment) recyclerFragment0).getActionMode().finish();
-                }
                 Fragment recyclerFragment1 = getFragment(1);//Get recycler fragment
                 if (recyclerFragment1 != null) {
                     if(((UsersFragment) recyclerFragment1).getActionMode() != null)
@@ -121,12 +114,12 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
         });
 
         // attach tab layout with view pager
-        mTabLayoutUserListing.setupWithViewPager(mViewPagerUserListing);
+        mTabLayoutDashboard.setupWithViewPager(mViewPagerDashboard);
 
         mLogoutPresenter = new LogoutPresenter(this);
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_user_listing, menu);
         return super.onCreateOptionsMenu(menu);
@@ -140,7 +133,7 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     public void logout() {
         new AlertDialog.Builder(this)
@@ -150,7 +143,7 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        ChatRoomsDBM.getInstance(UserListingActivity.this).clear();
+                        ChatRoomsDBM.getInstance(DashboardActivity.this).clear();
                         mLogoutPresenter.logout();
                     }
                 })
@@ -171,7 +164,7 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        GoogleSignInActivity.startIntent(UserListingActivity.this,
+                        GoogleSignInActivity.startIntent(DashboardActivity.this,
                                 Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     }
                 });
@@ -184,27 +177,27 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
 
     //Return current fragment on basis of Position
     public Fragment getFragment(int pos) {
-        return userListingPagerAdapter.getItem(pos);
+        return dashboardPagerAdapter.getItem(pos);
     }
 
     @Override
-    public void onCreateGroupRequest(GroupWithTokens groupWithTokens, final Callback callback) {
+    public void onCreateGroupRequest(RoomWithTokens roomWithTokens, final Callback callback) {
         showProgress();
-        final Group group = groupWithTokens.group;
-        final List<String> tokens = groupWithTokens.tokens;
+        final Room room = roomWithTokens.room;
+        final List<String> tokens = roomWithTokens.tokens;
         FirebaseDatabase.getInstance().getReference()
-                .child(Constants.ARG_ROOMS).child(group.roomId).keepSynced(true);
+                .child(Constants.ARG_ROOMS).child(room.roomId).keepSynced(true);
         FirebaseDatabase.getInstance().getReference()
-                .child(Constants.ARG_ROOMS).child(group.roomId).setValue(group)
+                .child(Constants.ARG_ROOMS).child(room.roomId).setValue(room)
         .addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()) {
-                    final String groupChild = group.type == Constants.TYPE_INDIVIDUAL ? Constants.ARG_IND_ROOMS : Constants.ARG_GRP_ROOMS;
+                    final String groupChild = room.type == Constants.TYPE_INDIVIDUAL ? Constants.ARG_IND_ROOMS : Constants.ARG_GRP_ROOMS;
                     FirebaseDatabase.getInstance().getReference()
                             .child(Constants.ARG_USERS).keepSynced(true);
                     for (final String userId:
-                         group.users) {
+                         room.users) {
                         FirebaseDatabase.getInstance().getReference()
                                 .child(Constants.ARG_USERS).child(userId).child(groupChild)
                                 .getRef().addListenerForSingleValueEvent(new ValueEventListener() {
@@ -213,8 +206,8 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                                 List<String> existingRooms = (List<String>)dataSnapshot.getValue();
                                 if(existingRooms == null)
                                     existingRooms = new ArrayList<>();
-                                if(!existingRooms.contains(group.roomId))
-                                    existingRooms.add(group.roomId);
+                                if(!existingRooms.contains(room.roomId))
+                                    existingRooms.add(room.roomId);
                                 FirebaseDatabase.getInstance().getReference()
                                         .child(Constants.ARG_USERS).child(userId).child(groupChild).setValue(existingRooms);
                             }
@@ -226,7 +219,7 @@ public class UserListingActivity extends BaseActivity implements LogoutContract.
                         });
                     }
 
-                    String topicName = "/topics/"+group.roomId;
+                    String topicName = "/topics/"+ room.roomId;
                     FcmTopicBuilder.initialize()
                             .topicName(topicName)
                             .tokens(tokens)

@@ -6,8 +6,8 @@
 
     <!--  Toolbar ActionMode Menu Items  -->
     <item
-        android:id="@+id/action_create_group"
-        android:icon="@drawable/ic_action_create_group_white_24dp"
+        android:id="@+id/action_done_create_group"
+        android:icon="@drawable/ic_action_done_white_24dp"
         android:orderInCategory="100"
         android:title="@string/create_group"
         app:showAsAction="always" />

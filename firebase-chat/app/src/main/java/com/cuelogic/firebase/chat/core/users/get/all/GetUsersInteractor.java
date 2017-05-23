@@ -1,10 +1,7 @@
 package com.cuelogic.firebase.chat.core.users.get.all;
 
-import android.text.TextUtils;
-
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.utils.Constants;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;

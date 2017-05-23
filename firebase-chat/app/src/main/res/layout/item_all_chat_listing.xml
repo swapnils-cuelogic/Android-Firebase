@@ -17,8 +17,8 @@
         android:layout_height="@dimen/user_icon_height"
         android:layout_alignParentLeft="true"
         android:layout_centerInParent="true"
-        android:background="@drawable/circle_mine"
-        android:src="@drawable/circle_other"
+        android:background="@drawable/circle_primary"
+        android:src="@drawable/ic_group_white_24dp"
         app:civ_border_color="@color/border"
         app:civ_border_width="1dp" />
 

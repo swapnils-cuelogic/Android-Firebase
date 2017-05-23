@@ -1,19 +1,14 @@
 package com.cuelogic.firebase.chat.listeners;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.support.v7.view.ActionMode;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.cuelogic.firebase.chat.R;
-import com.cuelogic.firebase.chat.models.Group;
-import com.cuelogic.firebase.chat.ui.activities.UserListingActivity;
-import com.cuelogic.firebase.chat.ui.adapters.GroupListingRecyclerAdapter;
-import com.cuelogic.firebase.chat.ui.fragments.GroupsFragment;
+import com.cuelogic.firebase.chat.models.Room;
+import com.cuelogic.firebase.chat.ui.adapters.ChatsListingRecyclerAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,13 +17,12 @@ import java.util.List;
 
 public class GroupsToolbarActionModeCallback implements ActionMode.Callback {
     private Context mContext;
-    private GroupListingRecyclerAdapter groupListingRecyclerAdapter;
-    private List<Group> groupsList;
+    private ChatsListingRecyclerAdapter chatsListingRecyclerAdapter;
+    private List<Room> groupsList;
 
-
-    public GroupsToolbarActionModeCallback(Context context, GroupListingRecyclerAdapter groupListingRecyclerAdapter, List<Group> groupsList) {
+    public GroupsToolbarActionModeCallback(Context context, ChatsListingRecyclerAdapter chatsListingRecyclerAdapter, List<Room> groupsList) {
         this.mContext = context;
-        this.groupListingRecyclerAdapter = groupListingRecyclerAdapter;
+        this.chatsListingRecyclerAdapter = chatsListingRecyclerAdapter;
         this.groupsList = groupsList;
     }
 
@@ -49,44 +43,43 @@ public class GroupsToolbarActionModeCallback implements ActionMode.Callback {
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
         //Get selected ids on basis of current fragment action mode
-        SparseBooleanArray selected = groupListingRecyclerAdapter.getSelectedIds();
+        /*SparseBooleanArray selected = chatsListingRecyclerAdapter.getSelectedIds();
 
         int selectedMessageSize = selected.size();
 
-        List<Group> selectedGroups = new ArrayList<>();
+        List<Room> selectedRooms = new ArrayList<>();
         //Loop to all selected items
         for (int i = (selectedMessageSize - 1); i >= 0; i--) {
             if (selected.valueAt(i)) {
                 //get selected data in Model
-                Group group = groupsList.get(selected.keyAt(i));
-                selectedGroups.add(group);
+                Room room = groupsList.get(selected.keyAt(i));
+                selectedRooms.add(room);
             }
         }
         mode.finish();//Finish action mode
 
-        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(0);//Get recycler view fragment
+        Fragment recyclerFragment = ((DashboardActivity)mContext).getFragment(0);//Get recycler view fragment
 
         switch (item.getItemId()) {
             case R.id.action_mute_notifications:
                 if (recyclerFragment != null)
-                    ((GroupsFragment) recyclerFragment).muteNotifications(selectedGroups);
+                    ((RecentChatsFragment) recyclerFragment).muteNotifications(selectedRooms);
                 break;
             case R.id.action_unmute_notifications:
                 if (recyclerFragment != null)
-                    ((GroupsFragment) recyclerFragment).unmuteNotifications(selectedGroups);
+                    ((RecentChatsFragment) recyclerFragment).unmuteNotifications(selectedRooms);
                 break;
-        }
+        }*/
         return false;
     }
-
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         //When action mode destroyed remove selected selections and set action mode to null
         //First check current fragment action mode
-        groupListingRecyclerAdapter.removeSelection();  // remove selection
-        Fragment recyclerFragment = ((UserListingActivity)mContext).getFragment(0);//Get recycler fragment
-        if (recyclerFragment != null)
-            ((GroupsFragment) recyclerFragment).setNullToActionMode();//Set action mode null
+        chatsListingRecyclerAdapter.removeSelection();  // remove selection
+//        Fragment recyclerFragment = ((DashboardActivity)mContext).getFragment(0);//Get recycler fragment
+//        if (recyclerFragment != null)
+//            ((RecentChatsFragment) recyclerFragment).setNullToActionMode();//Set action mode null
     }
 }

@@ -10,20 +10,21 @@ import java.util.List;
  * Created by Harshal Vibhandik on 10/05/17.
  */
 
-public class Group implements Parcelable, Comparable<Group> {
+public class Room implements Parcelable, Comparable<Room> {
     public String roomId;
     public int type;
     public String displayName;
     public String photoUrl;
+    public String email;
     public long createdTime;
     public String createdBy;
     public Long lastUpdatedTime;
     public List<String> users;
 
-    public Group() {
+    public Room() {
     }
 
-    public Group(String roomId, int type, String displayName, long createdTime, String createdBy, long lastUpdatedTime, List<String> users) {
+    public Room(String roomId, int type, String displayName, long createdTime, String createdBy, long lastUpdatedTime, List<String> users) {
         this.roomId = roomId;
         this.type = type;
         this.displayName = displayName;
@@ -50,35 +51,37 @@ public class Group implements Parcelable, Comparable<Group> {
         dest.writeInt(this.type);
         dest.writeString(this.displayName);
         dest.writeString(this.photoUrl);
+        dest.writeString(this.email);
         dest.writeLong(this.createdTime);
         dest.writeString(this.createdBy);
         dest.writeLong(this.lastUpdatedTime);
         dest.writeStringList(this.users);
     }
 
-    protected Group(Parcel in) {
+    protected Room(Parcel in) {
         this.roomId = in.readString();
         this.type = in.readInt();
         this.displayName = in.readString();
         this.photoUrl = in.readString();
+        this.email = in.readString();
         this.createdTime = in.readLong();
         this.createdBy = in.readString();
         this.lastUpdatedTime = in.readLong();
         this.users = in.createStringArrayList();
     }
 
-    public static final Parcelable.Creator<Group> CREATOR = new Parcelable.Creator<Group>() {
-        public Group createFromParcel(Parcel source) {
-            return new Group(source);
+    public static final Parcelable.Creator<Room> CREATOR = new Parcelable.Creator<Room>() {
+        public Room createFromParcel(Parcel source) {
+            return new Room(source);
         }
 
-        public Group[] newArray(int size) {
-            return new Group[size];
+        public Room[] newArray(int size) {
+            return new Room[size];
         }
     };
 
     @Override
-    public int compareTo(@NonNull Group group) {
-        return group.lastUpdatedTime.compareTo(this.lastUpdatedTime);
+    public int compareTo(@NonNull Room room) {
+        return room.lastUpdatedTime.compareTo(this.lastUpdatedTime);
     }
 }
