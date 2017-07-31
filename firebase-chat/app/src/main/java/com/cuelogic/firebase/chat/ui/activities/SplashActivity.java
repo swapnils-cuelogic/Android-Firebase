@@ -25,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
                 // check if user is already logged in or not
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     // if logged in redirect the user to user listing activity
-                    UserListingActivity.startActivity(SplashActivity.this);
+                    DashboardActivity.startActivity(SplashActivity.this);
                 } else {
                     // otherwise redirect the user to login activity
                     GoogleSignInActivity.startIntent(SplashActivity.this);

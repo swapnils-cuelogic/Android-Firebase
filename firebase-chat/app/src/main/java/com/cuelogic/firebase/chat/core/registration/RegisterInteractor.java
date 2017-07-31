@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.models.User;
-import com.cuelogic.firebase.chat.utils.Constants;
 import com.cuelogic.firebase.chat.utils.SharedPrefUtil;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -68,7 +67,7 @@ public class RegisterInteractor implements RegisterContract.Interactor {
 
                                                                 User user = new User(firebaseUser.getUid(),
                                                                         firebaseUser.getEmail(),
-                                                                        new SharedPrefUtil(FirebaseChatMainApp.getAppContext()).getString(Constants.ARG_FIREBASE_TOKEN),
+                                                                        SharedPrefUtil.getFirebaseToken(FirebaseChatMainApp.getAppContext()),
                                                                         displayName);
 
                                                                 mOnRegistrationListener.onSuccess(user);

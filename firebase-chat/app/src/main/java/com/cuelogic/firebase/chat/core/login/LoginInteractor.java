@@ -36,7 +36,7 @@ public class LoginInteractor implements LoginContract.Interactor {
                         if (task.isSuccessful()) {
                             mOnLoginListener.onSuccess(task.getResult().toString());
                             updateFirebaseToken(task.getResult().getUser().getUid(),
-                                    new SharedPrefUtil(activity.getApplicationContext()).getString(Constants.ARG_FIREBASE_TOKEN, null));
+                                    SharedPrefUtil.getFirebaseToken(activity.getApplicationContext()));
                         } else {
                             mOnLoginListener.onFailure(task.getException().getMessage());
                         }

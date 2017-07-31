@@ -10,6 +10,10 @@ public interface GetUsersContract {
 
         void onGetAllUsersFailure(String message);
 
+        void onGetUserSuccess(User user);
+
+        void onGetUserFailure(String message);
+
         void onGetChatUsersSuccess(List<User> users);
 
         void onGetChatUsersFailure(String message);
@@ -18,11 +22,15 @@ public interface GetUsersContract {
     interface Presenter {
         void getAllUsers();
 
+        void getUser(String uid);
+
         void getChatUsers();
     }
 
     interface Interactor {
         void getAllUsersFromFirebase();
+
+        void getUserFromFirebase(String uid);
 
         void getChatUsersFromFirebase();
     }
@@ -31,6 +39,12 @@ public interface GetUsersContract {
         void onGetAllUsersSuccess(List<User> users);
 
         void onGetAllUsersFailure(String message);
+    }
+
+    interface OnGetUserListener {
+        void onGetUserSuccess(User user);
+
+        void onGetUserFailure(String message);
     }
 
     interface OnGetChatUsersListener {

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.View;
+import android.widget.TextView;
 
 import com.cuelogic.firebase.chat.FirebaseChatMainApp;
 import com.cuelogic.firebase.chat.R;
@@ -18,6 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -28,6 +30,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class GoogleSignInActivity extends BaseActivity {
     private static final String TAG = GoogleSignInActivity.class.getSimpleName();
@@ -65,6 +69,13 @@ public class GoogleSignInActivity extends BaseActivity {
         mProgressDialog.setCancelable(false);
 
         signInButton = (com.google.android.gms.common.SignInButton) findViewById(R.id.sign_in_button);
+        setGooglePlusButtonText(signInButton, getString(R.string.login_with_google_account));
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
+            }
+        });
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -101,13 +112,6 @@ public class GoogleSignInActivity extends BaseActivity {
                 }*/
             }
         };
-
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn();
-            }
-        });
         /*signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,6 +128,19 @@ public class GoogleSignInActivity extends BaseActivity {
                         });
             }
         });*/
+    }
+
+    protected void setGooglePlusButtonText(SignInButton signInButton, String buttonText) {
+        // Find the TextView that is inside of the SignInButton and set its text
+        for (int i = 0; i < signInButton.getChildCount(); i++) {
+            View v = signInButton.getChildAt(i);
+
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setText(buttonText);
+                return;
+            }
+        }
     }
 
     private void signIn() {
@@ -180,7 +197,7 @@ public class GoogleSignInActivity extends BaseActivity {
                         // signed in user can be handled in the listener.
                         if (task.isSuccessful()) {
                             updateFirebaseToken(task.getResult().getUser().getUid(),
-                                    new SharedPrefUtil(FirebaseChatMainApp.getAppContext()).getString(Constants.ARG_FIREBASE_TOKEN, null));
+                                    SharedPrefUtil.getFirebaseToken(FirebaseChatMainApp.getAppContext()));
 
                             FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -191,7 +208,7 @@ public class GoogleSignInActivity extends BaseActivity {
 
                             User user = new User(firebaseUser.getUid(),
                                     firebaseUser.getEmail(),
-                                    new SharedPrefUtil(FirebaseChatMainApp.getAppContext()).getString(Constants.ARG_FIREBASE_TOKEN),
+                                    SharedPrefUtil.getFirebaseToken(FirebaseChatMainApp.getAppContext()),
                                     firebaseUser.getDisplayName(),
                                     firebaseUser.getPhotoUrl() != null ? firebaseUser.getPhotoUrl().toString() : "");
 
@@ -207,16 +224,26 @@ public class GoogleSignInActivity extends BaseActivity {
     public void addUserToDatabase(User user) {
         mProgressDialog.setMessage(getString(R.string.adding_user_to_db));
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("uid", user.uid);
+        result.put("displayName", user.displayName);
+        result.put("email", user.email);
+        result.put("photoUrl", user.photoUrl);
+        result.put("firebaseToken", user.firebaseToken);
+
+        database.child(Constants.ARG_USERS).keepSynced(true);
+
         database.child(Constants.ARG_USERS)
                 .child(user.uid)
-                .setValue(user)
+                .updateChildren(result)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             mProgressDialog.dismiss();
                             showToastShort(getString(R.string.logged_in_successfully));
-                            UserListingActivity.startActivity(GoogleSignInActivity.this, Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            DashboardActivity.startActivity(GoogleSignInActivity.this, Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         } else {
                             mProgressDialog.dismiss();
                             showAlertMessage(task.getException().getMessage());

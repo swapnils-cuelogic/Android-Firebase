@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.List;
+
 @IgnoreExtraProperties
 public class User implements Parcelable {
     public String uid;
@@ -12,6 +14,8 @@ public class User implements Parcelable {
     public String firebaseToken;
     public String displayName;
     public String photoUrl;
+    public List<String> indRooms;
+    public List<String> grpRooms;
 
     public User() {
     }
@@ -32,6 +36,12 @@ public class User implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return displayName;
+    }
+
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -43,6 +53,8 @@ public class User implements Parcelable {
         dest.writeString(this.firebaseToken);
         dest.writeString(this.displayName);
         dest.writeString(this.photoUrl);
+        dest.writeStringList(this.indRooms);
+        dest.writeStringList(this.grpRooms);
     }
 
     protected User(Parcel in) {
@@ -51,6 +63,8 @@ public class User implements Parcelable {
         this.firebaseToken = in.readString();
         this.displayName = in.readString();
         this.photoUrl = in.readString();
+        this.indRooms = in.createStringArrayList();
+        this.grpRooms = in.createStringArrayList();
     }
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {

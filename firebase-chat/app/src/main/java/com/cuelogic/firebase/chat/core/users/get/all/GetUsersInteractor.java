@@ -1,10 +1,7 @@
 package com.cuelogic.firebase.chat.core.users.get.all;
 
-import android.text.TextUtils;
-
 import com.cuelogic.firebase.chat.models.User;
 import com.cuelogic.firebase.chat.utils.Constants;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -18,9 +15,19 @@ public class GetUsersInteractor implements GetUsersContract.Interactor {
     private static final String TAG = "GetUsersInteractor";
 
     private GetUsersContract.OnGetAllUsersListener mOnGetAllUsersListener;
+    private GetUsersContract.OnGetUserListener mOnGetUserListener;
+
+    public GetUsersInteractor(GetUsersContract.OnGetAllUsersListener onGetAllUsersListener, GetUsersContract.OnGetUserListener onGetUserListener) {
+        this.mOnGetAllUsersListener = onGetAllUsersListener;
+        this.mOnGetUserListener = onGetUserListener;
+    }
 
     public GetUsersInteractor(GetUsersContract.OnGetAllUsersListener onGetAllUsersListener) {
         this.mOnGetAllUsersListener = onGetAllUsersListener;
+    }
+
+    public GetUsersInteractor(GetUsersContract.OnGetUserListener onGetUserListener) {
+        this.mOnGetUserListener = onGetUserListener;
     }
 
     @Override
@@ -34,9 +41,9 @@ public class GetUsersInteractor implements GetUsersContract.Interactor {
                 while (dataSnapshots.hasNext()) {
                     DataSnapshot dataSnapshotChild = dataSnapshots.next();
                     User user = dataSnapshotChild.getValue(User.class);
-                    if (!TextUtils.equals(user.uid, FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    //if (!TextUtils.equals(user.uid, FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                         users.add(user);
-                    }
+                    //}
                 }
                 mOnGetAllUsersListener.onGetAllUsersSuccess(users);
             }
@@ -71,5 +78,25 @@ public class GetUsersInteractor implements GetUsersContract.Interactor {
 
             }
         });*/
+    }
+
+    @Override
+    public void getUserFromFirebase(final String uid) {
+        FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(uid).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(user != null)
+                    mOnGetUserListener.onGetUserSuccess(user);
+                else
+                    mOnGetUserListener.onGetUserFailure("User not found");
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mOnGetUserListener.onGetUserFailure(databaseError.getMessage());
+            }
+        });
     }
 }

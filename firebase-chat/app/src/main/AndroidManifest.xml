@@ -33,7 +33,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name="com.cuelogic.firebase.chat.ui.activities.UserListingActivity"
+            android:name="com.cuelogic.firebase.chat.ui.activities.DashboardActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity

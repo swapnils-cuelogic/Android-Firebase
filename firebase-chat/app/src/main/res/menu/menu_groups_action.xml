@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.activities.DashboardActivity">
+
+    <!--  Toolbar ActionMode Menu Items  -->
+    <item
+        android:id="@+id/action_mute_notifications"
+        android:icon="@drawable/ic_action_mute_white_24dp"
+        android:orderInCategory="100"
+        android:title="@string/mute_notifications"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_unmute_notifications"
+        android:icon="@drawable/ic_action_unmute_white_24dp"
+        android:orderInCategory="100"
+        android:title="@string/unmute_notifications"
+        app:showAsAction="always" />
+</menu>

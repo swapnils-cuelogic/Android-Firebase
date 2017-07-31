@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#7d62d9</color>
-    <color name="colorPrimaryDark">#512DA8</color>
-    <color name="colorAccent">#26c6da</color>
+    <color name="colorPrimary">#0071bb</color>
+    <color name="colorPrimaryDark">#0f5fb1</color>
+    <color name="colorAccent">#029046</color>
 
-    <color name="chatBubbleMe">#7d62d9</color>
-    <color name="chatTextMe">#ffffff</color>
-    <color name="chatBubbleOther">#26c6da</color>
-    <color name="chatTextOther">#ffffff</color>
+    <color name="chatBubbleMe">#a0d9ff</color>
+    <color name="chatTextMe">#424242</color>
+    <color name="chatBubbleOther">#d2ffd8</color>
+    <color name="chatTextOther">#424242</color>
     <color name="border">#808080</color>
+    <color name="profile_bg_color">#7199ff</color>
+    <color name="settings_header">#909090</color>
+    <color name="settings_headers_bg">#f0eff5</color>
+    <color name="chat_other_user_name">#624e99</color>
 
     <color name="red_50">#FFEBEE</color>
     <color name="red_100">#FFCDD2</color>

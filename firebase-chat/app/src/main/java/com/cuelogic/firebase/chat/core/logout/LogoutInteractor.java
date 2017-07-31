@@ -20,7 +20,7 @@ public class LogoutInteractor implements LogoutContract.Interactor {
     public void performFirebaseLogout() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if (firebaseUser != null) {
-            FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(firebaseUser.getUid()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            FirebaseDatabase.getInstance().getReference().child(Constants.ARG_USERS).child(firebaseUser.getUid()).child("firebaseToken").removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     FirebaseAuth.getInstance().signOut();
